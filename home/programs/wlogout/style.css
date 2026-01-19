@@ -1,0 +1,106 @@
+* {
+  background-image: none;
+  font-family: "Nerd Font Mono", monospace;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+@import "catppuccin.css";
+
+window {
+  background-color: transparent;
+}
+
+button {
+  color: @text;
+  background-color: @base;
+  outline-style: none;
+  border: none;
+  border-width: 0px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 20%;
+  border-radius: 0px;
+  box-shadow: none;
+  text-shadow: none;
+  animation: gradient_f 20s ease-in infinite;
+}
+
+button:focus {
+  background-color: @surface1;
+  background-size: 30%;
+}
+
+button:hover {
+  background-color: @surface1;
+  background-size: 40%;
+  border-radius: 8px;
+  animation: gradient_f 20s ease-in infinite;
+  transition: all 0.3s cubic-bezier(0.55, 0, 0.28, 1.682);
+}
+
+button:hover#lock {
+  border-radius: 8px;
+  margin: 12px;
+}
+
+button:hover#logout {
+  border-radius: 8px;
+  margin: 12px;
+}
+
+button:hover#suspend {
+  border-radius: 8px;
+  margin: 12px;
+}
+
+button:hover#shutdown {
+  border-radius: 8px;
+  margin: 12px;
+}
+
+button:hover#hibernate {
+  border-radius: 8px;
+  margin: 12px;
+}
+
+button:hover#reboot {
+  border-radius: 8px;
+  margin: 12px;
+}
+
+#lock {
+  background-image: image(url("icons/lock.png"));
+  border-radius: 12px;
+  margin: 12px;
+}
+
+#logout {
+  background-image: image(url("icons/logout.png"));
+  border-radius: 12px;
+  margin: 12px;
+}
+
+#suspend {
+  background-image: image(url("icons/suspend.png"));
+  border-radius: 12px;
+  margin: 12px;
+}
+
+#shutdown {
+  background-image: image(url("icons/shutdown.png"));
+  border-radius: 12px;
+  margin: 12px;
+}
+
+#hibernate {
+  background-image: image(url("icons/hibernate.png"));
+  border-radius: 12px;
+  margin: 12px;
+}
+
+#reboot {
+  background-image: image(url("icons/reboot.png"));
+  border-radius: 12px;
+  margin: 12px;
+}

@@ -1,0 +1,16 @@
+{
+  "memory": {
+    "states": {
+      "critical": 90,
+      "high": 70,
+      "medium": 50,
+    },
+    "interval": 30,
+    "format": "  {used}GB",
+    "rotate": 0,
+    "format-alt": "  {percentage}%",
+    "max-length": 10,
+    "tooltip": true,
+    "tooltip-format": "Memory usage: {percentage}%\nUsed: {used:0.2f}GB / {total:0.2f}GB\nAvailable: {avail:0.2f}GB\nSwap used: {swapUsed:0.2f}GB / {swapTotal:0.2f}GB ({swapPercentage}%)",
+  },
+}

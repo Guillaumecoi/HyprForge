@@ -1,0 +1,14 @@
+{
+  "custom/sensorsinfo": {
+    "exec": "hyde-shell sensorsinfo --interval 5",
+    "return-type": "json",
+    "format": "{0}",
+    "hide-empty": true,
+    "tooltip": true,
+    "class": "default-margin-padding",
+    "on-scroll-up": "hyde-shell sensorsinfo --prev",
+    "on-scroll-down": "hyde-shell sensorsinfo --next",
+    "signal": 19,
+    "restart-interval": 2, // restart if the script exits (optional)
+  },
+}

@@ -1,0 +1,24 @@
+{
+  "pulseaudio": {
+    "format": "{icon} {volume}%",
+    "rotate": 0,
+    "format-muted": "󰖁",
+    "on-click": "pavucontrol",
+    "on-click-right": "wpctl set-mute @DEFAULT_SINK@ toggle",
+    "on-click-middle": "wpctl set-volume @DEFAULT_SINK@ 100%",
+    "on-scroll-up": "wpctl set-volume @DEFAULT_SINK@ +5%",
+    "on-scroll-down": "wpctl set-volume @DEFAULT_SINK@ 5%-",
+    "tooltip-format": "{icon} {desc} // {volume}%",
+    "scroll-step": 5,
+    "format-icons": {
+      "headphone": "",
+      "hands-free": "",
+      "headset": "",
+      "phone": "",
+      "portable": "",
+      "car": "",
+      "default": ["󰕿", "󰖀", "󰕾"],
+    },
+    "max-volume": 150,
+  },
+}

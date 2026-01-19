@@ -1,0 +1,10 @@
+{
+  "custom/wallchange": {
+    "format": "\udb80\udd8a {0}",
+    "rotate": 0,
+    "tooltip-format": "\udb80\udd8a Switch wallpaper",
+    "on-click": "wallpaper-rotate",
+    "interval": 86400,
+    "tooltip": true,
+  },
+}

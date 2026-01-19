@@ -1,0 +1,63 @@
+@import "catppuccin.css";
+@import "modules.css";
+
+* {
+  font-family: "JetBrains Mono Nerd Font", monospace;
+  font-size: 14px;
+  font-weight: 700;
+  min-height: 0;
+  border: none;
+}
+
+window#waybar {
+  background-color: rgba(30, 30, 46, 0.85);
+  color: @text;
+}
+
+.modules-right {
+  margin-right: 6px;
+}
+
+.modules-left {
+  margin-left: 6px;
+}
+
+label.module {
+  padding: 4px 4px;
+}
+
+#workspaces button {
+  padding: 0 5px;
+  background: transparent;
+  color: @subtext0;
+}
+
+#workspaces button.active {
+  background: @mauve;
+  color: @base;
+  border-radius: 4px;
+}
+
+#workspaces button:hover {
+  background: @surface1;
+  color: @text;
+  border-radius: 4px;
+}
+
+#window {
+  background: transparent;
+  color: @subtext1;
+  font-style: italic;
+}
+
+tooltip {
+  background: rgba(30, 30, 46, 0.85);
+}
+
+tooltip label {
+  color: @text;
+}
+
+#tray {
+  background: @surface0;
+}

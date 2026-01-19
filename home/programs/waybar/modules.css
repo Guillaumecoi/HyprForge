@@ -1,0 +1,20 @@
+@import "catppuccin.css";
+
+#memory.medium,
+#battery.medium {
+  color: @yellow;
+}
+
+#memory.high,
+#battery.high {
+  color: @peach;
+}
+
+#memory.critical,
+#battery.critical {
+  color: @red;
+}
+
+#idle_inhibitor.activated {
+  color: @green;
+}
