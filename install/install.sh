@@ -100,28 +100,31 @@ select_disk() {
         exit 1
     fi
 
-    echo -e "${CYAN}Enter the disk name (e.g., sda, nvme0n1): ${NC}"
-    read -r disk_name
+    while true; do
+        echo -e "${CYAN}Enter the disk name (e.g., sda, nvme0n1): ${NC}"
+        read -r disk_name
 
-    # Validate disk exists
-    if [[ ! -b "/dev/${disk_name}" ]]; then
-        print_error "Disk /dev/${disk_name} does not exist"
-        exit 1
-    fi
+        # Validate disk exists
+        if [[ ! -b "/dev/${disk_name}" ]]; then
+            print_error "Disk /dev/${disk_name} does not exist. Please try again."
+            continue
+        fi
 
-    TARGET_DISK="/dev/${disk_name}"
+        TARGET_DISK="/dev/${disk_name}"
 
-    # Show disk info
-    echo ""
-    print_warning "Selected disk: ${TARGET_DISK}"
-    lsblk "${TARGET_DISK}" -o NAME,SIZE,TYPE,MOUNTPOINT 2>/dev/null || true
-    echo ""
+        # Show disk info
+        echo ""
+        print_warning "Selected disk: ${TARGET_DISK}"
+        lsblk "${TARGET_DISK}" -o NAME,SIZE,TYPE,MOUNTPOINT 2>/dev/null || true
+        echo ""
 
-    print_warning "ALL DATA ON ${TARGET_DISK} WILL BE DESTROYED!"
-    if ! confirm "Are you absolutely sure?"; then
-        print_info "Aborted."
-        exit 0
-    fi
+        print_warning "ALL DATA ON ${TARGET_DISK} WILL BE DESTROYED!"
+        if confirm "Are you absolutely sure?"; then
+            break
+        else
+            print_info "Let's try again..."
+        fi
+    done
 }
 
 # Prompt for swap size
@@ -135,15 +138,19 @@ select_swap() {
     print_info "Your system has ${ram_gb}GB RAM"
     print_info "Recommended swap: ${ram_gb}GB (for hibernation) or $((ram_gb / 2))GB (general use)"
     echo ""
-    echo -e "${CYAN}Enter swap size in GB (0 for no swap): ${NC}"
-    read -r swap_input
 
-    if [[ ! "$swap_input" =~ ^[0-9]+$ ]]; then
-        print_error "Invalid input. Please enter a number."
-        exit 1
-    fi
+    while true; do
+        echo -e "${CYAN}Enter swap size in GB (0 for no swap): ${NC}"
+        read -r swap_input
 
-    SWAP_SIZE_GB=$swap_input
+        if [[ ! "$swap_input" =~ ^[0-9]+$ ]]; then
+            print_error "Invalid input. Please enter a number."
+            continue
+        fi
+
+        SWAP_SIZE_GB=$swap_input
+        break
+    done
 
     if [[ $SWAP_SIZE_GB -eq 0 ]]; then
         print_info "No swap partition will be created"
@@ -179,19 +186,25 @@ configure_user() {
     print_step "4/7" "User Configuration"
     echo ""
 
-    echo -e "${CYAN}Enter your username: ${NC}"
-    read -r USERNAME
-    if [[ -z "$USERNAME" ]]; then
-        print_error "Username cannot be empty"
-        exit 1
-    fi
+    while true; do
+        echo -e "${CYAN}Enter your username: ${NC}"
+        read -r USERNAME
+        if [[ -z "$USERNAME" ]]; then
+            print_error "Username cannot be empty. Please try again."
+            continue
+        fi
+        break
+    done
 
-    echo -e "${CYAN}Enter hostname for this machine: ${NC}"
-    read -r HOSTNAME
-    if [[ -z "$HOSTNAME" ]]; then
-        print_error "Hostname cannot be empty"
-        exit 1
-    fi
+    while true; do
+        echo -e "${CYAN}Enter hostname for this machine: ${NC}"
+        read -r HOSTNAME
+        if [[ -z "$HOSTNAME" ]]; then
+            print_error "Hostname cannot be empty. Please try again."
+            continue
+        fi
+        break
+    done
 
     echo -e "${CYAN}Do you have an NVIDIA GPU? [y/N]: ${NC}"
     read -r nvidia_response
@@ -201,19 +214,14 @@ configure_user() {
         HAS_NVIDIA="false"
     fi
 
-    echo ""
-    echo -e "${CYAN}Git configuration (for commits):${NC}"
-    echo -e "${CYAN}Enter your full name: ${NC}"
-    read -r GIT_NAME
-
-    echo -e "${CYAN}Enter your email: ${NC}"
-    read -r GIT_EMAIL
+    # Git configuration will be set up later
+    GIT_NAME=""
+    GIT_EMAIL=""
 
     echo ""
     print_info "Username: ${USERNAME}"
     print_info "Hostname: ${HOSTNAME}"
     print_info "NVIDIA GPU: ${HAS_NVIDIA}"
-    print_info "Git: ${GIT_NAME} <${GIT_EMAIL}>"
 }
 
 # Show installation summary
@@ -253,9 +261,72 @@ partition_disk() {
         part_prefix="${TARGET_DISK}p"
     fi
 
-    # Wipe existing partitions
-    print_info "Wiping existing partition table..."
-    wipefs -a "${TARGET_DISK}"
+    # Comprehensive cleanup to prevent "Device busy" errors
+    print_info "Performing thorough disk cleanup..."
+
+    # Disable all swaps
+    print_info "Disabling swap..."
+    swapoff -a 2>/dev/null || true
+
+    # Unmount all partitions from this disk (with force)
+    print_info "Unmounting partitions..."
+    for mount in $(mount | grep "${TARGET_DISK}" | awk '{print $1}'); do
+        umount -l "$mount" 2>/dev/null || true
+    done
+    umount -l "${TARGET_DISK}"* 2>/dev/null || true
+
+    # Deactivate all LVM volumes on this disk
+    print_info "Deactivating LVM volumes..."
+    for vg in $(pvs --noheadings -o vg_name 2>/dev/null | sort -u); do
+        if [[ -n "$vg" ]] && [[ "$vg" != "" ]]; then
+            vgchange -an "$vg" 2>/dev/null || true
+            vgremove -f "$vg" 2>/dev/null || true
+        fi
+    done
+
+    # Remove physical volumes
+    for part in ${TARGET_DISK}*; do
+        pvremove -ff "$part" 2>/dev/null || true
+    done
+    pvremove -ff "${TARGET_DISK}" 2>/dev/null || true
+
+    # Close all LUKS/encrypted devices
+    print_info "Closing encrypted devices..."
+    for mapper in /dev/mapper/*; do
+        if [[ -e "$mapper" ]] && cryptsetup status "$(basename "$mapper")" 2>/dev/null | grep -q "${TARGET_DISK}"; then
+            print_info "Closing $(basename "$mapper")..."
+            cryptsetup close "$(basename "$mapper")" 2>/dev/null || true
+        fi
+    done
+
+    # Remove all device mapper devices related to this disk
+    print_info "Removing device mapper devices..."
+    for dm in $(dmsetup ls | grep -E "${TARGET_DISK##*/}" | awk '{print $1}'); do
+        dmsetup remove "$dm" 2>/dev/null || true
+    done
+
+    # Final check and removal
+    dmsetup remove_all 2>/dev/null || true
+
+    # Wait for devices to settle
+    sleep 2
+
+    # Zero out the beginning of the disk to clear all signatures
+    print_info "Clearing disk signatures..."
+    dd if=/dev/zero of="${TARGET_DISK}" bs=1M count=10 status=none 2>/dev/null || true
+
+    # Now wipe filesystem signatures
+    print_info "Wiping partition table and signatures..."
+    wipefs -af "${TARGET_DISK}" 2>/dev/null || true
+
+    # Additional cleanup for partitions
+    for part in ${TARGET_DISK}*; do
+        if [[ -e "$part" ]]; then
+            wipefs -af "$part" 2>/dev/null || true
+        fi
+    done
+
+    sleep 1
 
     # Create GPT partition table
     print_info "Creating GPT partition table..."
@@ -417,6 +488,10 @@ setup_dotfiles() {
         local root_uuid
         root_uuid=$(blkid -s UUID -o value "${CRYPT_ROOT_DEVICE}")
 
+        # Insert LUKS configuration before the closing brace
+        # Remove the last closing brace temporarily
+        sed -i '$ d' /mnt/etc/nixos/hardware-configuration.nix
+
         # Add LUKS configuration
         cat >> /mnt/etc/nixos/hardware-configuration.nix << EOF
 
@@ -439,8 +514,10 @@ EOF
 EOF
         fi
 
+        # Close the LUKS devices block and the main config
         cat >> /mnt/etc/nixos/hardware-configuration.nix << EOF
   };
+}
 EOF
     fi
 
@@ -462,10 +539,10 @@ EOF
   # Printer configuration (empty list = no printing)
   printerDrivers = [];
 
-  # Git configuration
+  # Git configuration (to be configured later)
   git = {
-    fullName = "${GIT_NAME}";
-    email = "${GIT_EMAIL}";
+    fullName = "";
+    email = "";
   };
 }
 EOF

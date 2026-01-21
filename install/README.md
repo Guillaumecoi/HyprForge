@@ -15,7 +15,8 @@ On any Linux machine:
 
 ```bash
 # Download the latest NixOS minimal ISO
-wget https://channels.nixos.org/nixos-unstable/latest-nixos-minimal-x86_64-linux.iso
+wget https://channels.nixos.org/nixos-unstable/latest-nixos-minimal-x86_64-linux.iso >> install.sh
+sudo bash install.sh
 
 # Find your USB drive (e.g., /dev/sdb)
 lsblk
