@@ -8,19 +8,8 @@
 #
 # This file returns Hyprland-compatible keybinding configuration
 let
-  # Import apps from environment module
-  envModule = import ../environment.nix;
-  apps = envModule.apps or {
-    terminal = "kitty";
-    editor = "neovim";
-    editorAlt = "code";
-    browser = "firefox";
-    browserAlt = "brave";
-    explorer = "kitty -e yazi";
-    explorerAlt = "thunar";
-    notes = "obsidian";
-    aiCli = "copilot";
-  };
+  # Prefer canonical apps defined in ../apps.nix, fallback to environment.nix
+  apps = import ../apps.nix;
 in
 {
   # Main modifier key
