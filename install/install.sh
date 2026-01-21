@@ -480,20 +480,26 @@ setup_dotfiles() {
         swap_uuid=$(blkid -s UUID -o value "${SWAP_PART}")
     fi
 
-    # If encryption is enabled, add LUKS configuration to hardware-configuration.nix
+    # If encryption is enabled, check if LUKS is already configured
     if [[ "${ENCRYPT_OS}" == "true" ]]; then
-        print_info "Configuring LUKS encryption..."
+        print_info "Checking LUKS encryption configuration..."
 
-        # Get UUIDs of encrypted devices
-        local root_uuid
-        root_uuid=$(blkid -s UUID -o value "${CRYPT_ROOT_DEVICE}")
+        # Check if nixos-generate-config already added LUKS configuration
+        if grep -q "boot.initrd.luks.devices" /mnt/etc/nixos/hardware-configuration.nix; then
+            print_info "LUKS configuration already present (auto-detected by nixos-generate-config)"
+        else
+            print_info "Adding LUKS encryption configuration..."
 
-        # Insert LUKS configuration before the closing brace
-        # Remove the last closing brace temporarily
-        sed -i '$ d' /mnt/etc/nixos/hardware-configuration.nix
+            # Get UUIDs of encrypted devices
+            local root_uuid
+            root_uuid=$(blkid -s UUID -o value "${CRYPT_ROOT_DEVICE}")
 
-        # Add LUKS configuration
-        cat >> /mnt/etc/nixos/hardware-configuration.nix << EOF
+            # Insert LUKS configuration before the closing brace
+            # Remove the last closing brace temporarily
+            sed -i '$ d' /mnt/etc/nixos/hardware-configuration.nix
+
+            # Add LUKS configuration
+            cat >> /mnt/etc/nixos/hardware-configuration.nix << EOF
 
   # LUKS Encryption Configuration
   boot.initrd.luks.devices = {
@@ -503,22 +509,23 @@ setup_dotfiles() {
     };
 EOF
 
-        if [[ $SWAP_SIZE_GB -gt 0 ]]; then
-            local swap_uuid_crypt
-            swap_uuid_crypt=$(blkid -s UUID -o value "${CRYPT_SWAP_DEVICE}")
-            cat >> /mnt/etc/nixos/hardware-configuration.nix << EOF
+            if [[ $SWAP_SIZE_GB -gt 0 ]]; then
+                local swap_uuid_crypt
+                swap_uuid_crypt=$(blkid -s UUID -o value "${CRYPT_SWAP_DEVICE}")
+                cat >> /mnt/etc/nixos/hardware-configuration.nix << EOF
     cryptswap = {
       device = "/dev/disk/by-uuid/${swap_uuid_crypt}";
       preLVM = true;
     };
 EOF
-        fi
+            fi
 
-        # Close the LUKS devices block and the main config
-        cat >> /mnt/etc/nixos/hardware-configuration.nix << EOF
+            # Close the LUKS devices block and the main config
+            cat >> /mnt/etc/nixos/hardware-configuration.nix << EOF
   };
 }
 EOF
+        fi
     fi
 
     # Create user.nix
