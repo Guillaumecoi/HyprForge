@@ -151,18 +151,42 @@ Remove the USB drive when prompted. Your system will boot into the new NixOS ins
 
 ## Important: Machine-Specific Files
 
-The installation script generates two machine-specific files:
+The installation script generates machine-specific files that are gitignored:
 
-- `user.nix` - Your username, hostname, hardware settings (GPU, printers), and Git config
-- `hardware-configuration.nix` - Auto-detected hardware configuration (kernel modules, filesystems, etc.)
+**System-level configuration:**
 
-**These files are gitignored** because they're unique to each machine. When cloning this repo to a new machine:
+- `user.nix` - Username, hostname, hardware settings (GPU, printers), swap config
+- `hardware-configuration.nix` - Auto-detected hardware (kernel modules, filesystems)
 
-1. Copy the `.example` files: `cp user.nix.example user.nix`
-2. Edit `user.nix` with your machine's details
-3. Generate hardware config: `sudo nixos-generate-config --show-hardware-config > hardware-configuration.nix`
+**User-level configuration:**
 
-This keeps the repository clean while allowing easy setup on multiple machines.
+- `home/home-config.nix` - Git config, monitor settings, personal preferences
+- `home/packages.nix` - Your package list (customize what software you want)
+
+**Why gitignored?** These files are unique to each machine and user. The repository stays clean and portable.
+
+**Setting up on a new machine:**
+
+```bash
+# After cloning the repo
+cp user.nix.example user.nix
+cp hardware-configuration.nix.example hardware-configuration.nix
+cp home/home-config.nix.example home/home-config.nix
+cp home/packages.nix.example home/packages.nix
+
+# Edit each file with your settings
+nano user.nix              # System settings
+nano home/home-config.nix  # User settings
+nano home/packages.nix     # Package selection
+
+# Generate hardware config
+sudo nixos-generate-config --show-hardware-config > hardware-configuration.nix
+
+# CRITICAL: Force-add gitignored files to git index
+# Nix flakes only see files in git, but .gitignore prevents commits
+# This adds them to the index locally without committing them
+git add -f user.nix home/home-config.nix home/packages.nix
+```
 
 ## First Login
 

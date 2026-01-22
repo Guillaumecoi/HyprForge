@@ -307,12 +307,20 @@ cd ~/HyprForge
 # Copy example files and customize for your machine
 cp user.nix.example user.nix
 cp hardware-configuration.nix.example hardware-configuration.nix
+cp home/home-config.nix.example home/home-config.nix
+cp home/packages.nix.example home/packages.nix
 
-# Edit user.nix with your settings
-nano user.nix
+# Edit configuration files
+nano user.nix              # System: hostname, username, hardware settings
+nano home/home-config.nix  # User: git config, monitor settings
+nano home/packages.nix     # Add/remove packages you want
 
 # Generate your actual hardware config
 sudo nixos-generate-config --show-hardware-config > hardware-configuration.nix
+
+# IMPORTANT: Add gitignored files to git index (required for flakes)
+# They won't be committed due to .gitignore, but flakes need them in the index
+git add -f user.nix home/home-config.nix home/packages.nix
 
 # Apply the configuration
 sudo nixos-rebuild switch --flake .#YOUR_HOSTNAME

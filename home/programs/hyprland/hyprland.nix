@@ -1,6 +1,14 @@
 { pkgs, pkgs-unstable, config, lib, ... }:
 
 let
+  # Import home config for monitor settings (fallback to example if not exists)
+  homeConfigPath = ../../home-config.nix;
+  homeConfigExample = ../../home-config.nix.example;
+  homeConfig =
+    if builtins.pathExists homeConfigPath
+    then import homeConfigPath
+    else import homeConfigExample;
+
   # Import central keybindings
   central = import ../../keybindings { inherit lib; };
 
@@ -53,8 +61,10 @@ in
     enable = true;
     package = pkgs-unstable.hyprland;
 
-    # Merge all imported configurations
-    settings = keybindings // settings // animations // input // rules;
+    # Merge all imported configurations with monitor settings from home-config.nix
+    settings = keybindings // settings // animations // input // rules // {
+      monitor = homeConfig.monitors;
+    };
   };
 
   # Add keybinds helper script to user packages

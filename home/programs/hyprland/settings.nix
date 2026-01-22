@@ -1,6 +1,7 @@
 {
-  # Monitor configuration
-  monitor = ",preferred,auto,1";
+  # Monitor configuration - imported from home-config.nix
+  # This will be set dynamically in hyprland.nix
+  # monitor = ",preferred,auto,1";
 
   # Hyprland-specific environment variables
   # Note: Theme env vars are also set in home/environment.nix for non-Hyprland apps

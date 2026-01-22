@@ -2,9 +2,42 @@
 
 User-level configuration for packages, programs, and environment.
 
+## Machine-Specific Files (Gitignored)
+
+These files are unique to each user/machine and must be created locally:
+
+### `home-config.nix` ⚙️
+
+**Your personal settings**
+
+- Git username and email
+- Monitor configuration (resolution, position, scaling)
+- Other user-specific preferences
+
+Copy from example: `cp home-config.nix.example home-config.nix`
+
+### `packages.nix` 📦
+
+**Your software selection**
+
+- List of all programs you want installed
+- Customize this to add/remove software
+- Commented examples included
+
+Copy from example: `cp packages.nix.example packages.nix`
+
+**After creating/editing these files, you must add them to git:**
+
+```bash
+git add -f home-config.nix home-packages.nix
+```
+
+This is required for Nix flakes to see them (they won't be committed due to .gitignore).
+
 ## Structure
 
-- **packages.nix** - User packages by category
+- **home-config.nix** - Personal user settings (gitignored)
+- **packages.nix** - User packages by category (gitignored)
 - **environment.nix** - Environment variables, XDG directories
 - **scripts.nix** - Auto-wraps scripts from `scripts/`
 - **keybindings/** - Central keybinding system

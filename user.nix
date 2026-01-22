@@ -12,10 +12,4 @@
 
   # Printer configuration (empty list = no printing)
   printerDrivers = [ "epson-escpr2" "epson-escpr" ];
-
-  # Git configuration (to be configured later)
-  git = {
-    fullName = "GuillaumeCoi";
-    email = "GuillaumeCoi@users.noreply.github.com";
-  };
 }

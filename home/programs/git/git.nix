@@ -1,7 +1,13 @@
 { config, pkgs, ... }:
 
 let
-  user = import ../../../user.nix;
+  # Import home config (fallback to example if not exists)
+  homeConfigPath = ../../home-config.nix;
+  homeConfigExample = ../../home-config.nix.example;
+  homeConfig =
+    if builtins.pathExists homeConfigPath
+    then import homeConfigPath
+    else import homeConfigExample;
 in
 
 {
@@ -9,8 +15,8 @@ in
     # Git configuration settings
     settings = {
       user = {
-        name = user.git.fullName;
-        email = user.git.email;
+        name = homeConfig.git.fullName;
+        email = homeConfig.git.email;
       };
 
       core.editor = "nvim";
