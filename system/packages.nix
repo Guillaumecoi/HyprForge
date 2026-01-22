@@ -19,6 +19,7 @@
 
     # ===== SHELL =====
 
+    kitty
     bash # Bourne Again SHell - for scripts
     zsh # Z shell - interactive shell
     fzf # Fuzzy finder

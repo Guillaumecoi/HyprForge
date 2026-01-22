@@ -30,12 +30,12 @@ GIT_EMAIL=""
 
 print_banner() {
     echo -e "${CYAN}"
-    echo "╔════════════════════════════════════════════════════════════════╗"
-    echo "║                                                                ║"
-    echo "║     ${BOLD}NixOS Dotfiles Installer${NC}${CYAN}                                 ║"
-    echo "║     Hyprland + Catppuccin + Neovim + More                      ║"
-    echo "║                                                                ║"
-    echo "╚════════════════════════════════════════════════════════════════╝"
+    echo -e "╔════════════════════════════════════════════════════════════════╗"
+    echo -e "║                                                                ║"
+    echo -e "║     ${BOLD}NixOS Dotfiles Installer${NC}${CYAN}                ║"
+    echo -e "║     Hyprland + Catppuccin + Neovim + More                      ║"
+    echo -e "║                                                                ║"
+    echo -e "╚════════════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
 }
 
@@ -559,7 +559,7 @@ EOF
 
 # Install NixOS
 install_nixos() {
-    print_step "8/8" "Installing NixOS"
+    print_step "8/9" "Installing NixOS"
 
     print_info "This may take 15-30 minutes depending on your internet speed..."
     echo ""
@@ -577,28 +577,156 @@ set_password() {
     nixos-enter --root /mnt -c "passwd ${USERNAME}"
 }
 
+# Setup home-manager for the user
+setup_home_manager() {
+    print_step "9/9" "Setting up Home Manager"
+
+    print_info "Copying HyprForge to user home directory..."
+
+    # Create the user's home directory structure if it doesn't exist
+    mkdir -p "/mnt/home/${USERNAME}"
+
+    # Copy the entire configuration to user's home as HyprForge
+    cp -r /mnt/etc/nixos "/mnt/home/${USERNAME}/HyprForge"
+
+    # Set ownership to the user
+    nixos-enter --root /mnt -c "chown -R ${USERNAME}:users /home/${USERNAME}/HyprForge"
+
+    print_success "HyprForge copied to /home/${USERNAME}/HyprForge"
+
+    # Create a post-install setup script for the user
+    print_info "Creating post-install setup script..."
+
+    cat > "/mnt/home/${USERNAME}/.setup-home-manager.sh" << 'SETUPEOF'
+#!/usr/bin/env bash
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+BOLD='\033[1m'
+
+echo -e "${CYAN}"
+echo -e "╔════════════════════════════════════════════════════════════════╗"
+echo -e "║                                                                ║"
+echo -e "║     ${BOLD}HyprForge Home Manager Setup${NC}${CYAN}                           ║"
+echo -e "║                                                                ║"
+echo -e "╚════════════════════════════════════════════════════════════════╝"
+echo -e "${NC}\n"
+
+echo -e "${BLUE}[1/3]${NC} ${BOLD}Initializing Home Manager...${NC}"
+echo -e "${CYAN}  → ${NC}This will set up your user environment and applications"
+echo ""
+
+# Check if HyprForge directory exists
+if [[ ! -d "$HOME/HyprForge" ]]; then
+    echo -e "${RED}  ✗ ${NC}HyprForge directory not found in $HOME"
+    echo -e "${YELLOW}  ⚠ ${NC}Please ensure /home/$(whoami)/HyprForge exists"
+    exit 1
+fi
+
+cd "$HOME/HyprForge" || exit 1
+
+echo -e "${BLUE}[2/3]${NC} ${BOLD}Running Home Manager switch...${NC}"
+echo -e "${CYAN}  → ${NC}This may take 5-10 minutes on first run"
+echo ""
+
+# Run home-manager switch with the flake
+if home-manager switch --flake "$HOME/HyprForge#$(whoami)@$(hostname)"; then
+    echo -e "${GREEN}  ✓ ${NC}Home Manager setup complete!"
+else
+    echo -e "${RED}  ✗ ${NC}Home Manager setup failed"
+    echo -e "${YELLOW}  ⚠ ${NC}You may need to run this manually:"
+    echo -e "      cd ~/HyprForge && home-manager switch --flake .#$(whoami)@$(hostname)"
+    exit 1
+fi
+
+echo ""
+echo -e "${BLUE}[3/3]${NC} ${BOLD}Finalizing setup...${NC}"
+
+# Remove this setup script
+rm -f "$HOME/.setup-home-manager.sh"
+
+echo ""
+echo -e "${GREEN}"
+echo -e "╔════════════════════════════════════════════════════════════════╗"
+echo -e "║                                                                ║"
+echo -e "║     ${BOLD}Setup Complete!${NC}${GREEN}                                        ║"
+echo -e "║                                                                ║"
+echo -e "╚════════════════════════════════════════════════════════════════╝"
+echo -e "${NC}\n"
+
+echo -e "${CYAN}  → ${NC}All user applications and settings are now active!"
+echo -e "${CYAN}  → ${NC}Press ${BOLD}SUPER + T${NC} for terminal (kitty)"
+echo -e "${CYAN}  → ${NC}Press ${BOLD}SUPER + Q${NC} for another terminal"
+echo -e "${CYAN}  → ${NC}Press ${BOLD}SUPER + A${NC} for application launcher"
+echo -e "${CYAN}  → ${NC}Press ${BOLD}SUPER + SLASH${NC} to see all keybindings"
+echo ""
+echo -e "${YELLOW}  ⚠ ${NC}You may need to ${BOLD}logout and login${NC} or ${BOLD}reboot${NC} for all changes to take effect"
+echo ""
+
+read -p "Press Enter to continue..."
+
+SETUPEOF
+
+    chmod +x "/mnt/home/${USERNAME}/.setup-home-manager.sh"
+    nixos-enter --root /mnt -c "chown ${USERNAME}:users /home/${USERNAME}/.setup-home-manager.sh"
+
+    print_success "Post-install script created"
+
+    # Try to run home-manager setup now (this might fail if home-manager isn't available in the live environment)
+    print_info "Attempting to initialize Home Manager now..."
+    echo ""
+
+    if nixos-enter --root /mnt -c "su - ${USERNAME} -c 'cd ~/HyprForge && home-manager switch --flake .#${USERNAME}@${HOSTNAME}'" 2>/dev/null; then
+        print_success "Home Manager initialized successfully!"
+        # Remove the setup script since we don't need it anymore
+        rm -f "/mnt/home/${USERNAME}/.setup-home-manager.sh"
+    else
+        print_warning "Could not initialize Home Manager during installation"
+        print_info "A setup script has been created at ~/.setup-home-manager.sh"
+        print_info "It will run automatically on first login, or you can run it manually"
+    fi
+}
+
 # Final message
 print_complete() {
     echo ""
     echo -e "${GREEN}"
-    echo "╔════════════════════════════════════════════════════════════════╗"
-    echo "║                                                                ║"
-    echo "║     ${BOLD}Installation Complete!${NC}${GREEN}                                   ║"
-    echo "║                                                                ║"
-    echo "╚════════════════════════════════════════════════════════════════╝"
+    echo -e "╔════════════════════════════════════════════════════════════════╗"
+    echo -e "║                                                                ║"
+    echo -e "║     ${BOLD}Installation Complete!${NC}${GREEN}                 ║"
+    echo -e "║                                                                ║"
+    echo -e "╚════════════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
     echo ""
     print_info "Your NixOS system with Hyprland is ready!"
     echo ""
     print_info "Next steps:"
-    echo "  1. Reboot: ${BOLD}reboot${NC}"
-    echo "  2. Login with username: ${BOLD}${USERNAME}${NC}"
-    echo "  3. Press ${BOLD}SUPER + SLASH${NC} to see all keybindings"
-    echo "  4. Press ${BOLD}SUPER + T${NC} for terminal"
-    echo "  5. Press ${BOLD}SUPER + A${NC} for application launcher"
+    echo -e "  1. Reboot: ${BOLD}reboot${NC}"
+    echo -e "  2. Login with username: ${BOLD}${USERNAME}${NC}"
+
+    # Check if the setup script still exists
+    if [[ -f "/mnt/home/${USERNAME}/.setup-home-manager.sh" ]]; then
+        echo -e "  3. Run the setup script: ${BOLD}~/.setup-home-manager.sh${NC}"
+        echo -e "     ${YELLOW}(This will complete Home Manager setup)${NC}"
+        echo -e "  4. Press ${BOLD}SUPER + T${NC} for terminal"
+        echo -e "  5. Press ${BOLD}SUPER + A${NC} for application launcher"
+        echo -e "  6. Press ${BOLD}SUPER + SLASH${NC} to see all keybindings"
+    else
+        echo -e "  3. Press ${BOLD}SUPER + T${NC} for terminal"
+        echo -e "  4. Press ${BOLD}SUPER + A${NC} for application launcher"
+        echo -e "  5. Press ${BOLD}SUPER + SLASH${NC} to see all keybindings"
+    fi
+
     echo ""
-    print_info "Configuration location: /etc/nixos"
-    print_info "To make changes: edit files and run ${BOLD}sudo nixos-rebuild switch${NC}"
+    print_info "System config: /etc/nixos"
+    print_info "User config: ~/HyprForge"
+    print_info "To rebuild system: ${BOLD}sudo nixos-rebuild switch --flake /etc/nixos#${HOSTNAME}${NC}"
+    print_info "To rebuild user env: ${BOLD}home-manager switch --flake ~/HyprForge#${USERNAME}@${HOSTNAME}${NC}"
     echo ""
 
     if confirm "Reboot now?"; then
@@ -625,6 +753,7 @@ main() {
     setup_dotfiles
     install_nixos
     set_password
+    setup_home_manager
 
     print_complete
 }
