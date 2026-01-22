@@ -35,50 +35,32 @@
             # Rust toolchain
             rustToolchain
 
-            # Additional components
-            cargo-watch # Auto-recompile on changes
-            cargo-edit # cargo add, cargo rm, cargo upgrade
-            cargo-outdated # Check for outdated dependencies
-            cargo-audit # Security vulnerability scanner
-            cargo-flamegraph # Profiling
-            cargo-nextest # Better testing
-            cargo-expand # Expand macros
-
-            # Code coverage
-            cargo-tarpaulin
-
-            # Cross-compilation
-            cargo-cross
-
-            # Development tools
-            bacon # Background rust code checker
-
-            # System libraries (often needed for crates)
+            # System libraries
             pkg-config
             openssl
+
+            # Optional: Development tools
+            # cargo-watch  # Auto-recompile on changes
+            # cargo-edit  # cargo add, cargo rm, cargo upgrade
+            # cargo-outdated  # Check for outdated dependencies
+            # cargo-audit  # Security vulnerability scanner
+            # cargo-flamegraph  # Profiling
+            # cargo-nextest  # Better testing
+            # cargo-expand  # Expand macros
+
+            # Optional: Code coverage
+            # cargo-tarpaulin
+
+            # Optional: Cross-compilation
+            # cargo-cross
+
+            # Optional: Background checker
+            # bacon
           ];
 
           shellHook = ''
             echo "🦀 Rust environment loaded"
-            echo "Rust: $(rustc --version)"
-            echo "Cargo: $(cargo --version)"
-            echo "Rust Analyzer: available"
             export PROJECT_ROOT=$PWD
-
-            # Set cargo home to project directory
-            export CARGO_HOME=$PWD/.cargo
-
-            # Add cargo binaries to path
-            export PATH=$CARGO_HOME/bin:$PATH
-
-            if [ ! -f "Cargo.toml" ]; then
-              echo "💡 Initialize project with:"
-              echo "   Binary:  cargo init"
-              echo "   Library: cargo init --lib"
-            fi
-
-            echo "🔧 Tools: cargo-watch, cargo-edit, cargo-audit, bacon"
-            echo "💡 Run 'cargo watch -x run' for auto-recompile"
           '';
         };
       }

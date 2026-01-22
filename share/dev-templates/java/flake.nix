@@ -16,55 +16,31 @@
       {
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
-            # JDK (OpenJDK 21 - latest LTS)
-            jdk21
+            # JDK (Be sure to also set this as JAVA_HOME in shellHook)
+            jdk21 # OpenJDK 21
+            # jdk25 # Uncomment to use OpenJDK 25
 
-            # Build tools
+            # Build tool
             maven
-            gradle
-            ant
 
-            # Spring Boot CLI
-            spring-boot-cli
+            # Optional: Additional build tools
+            # gradle
+            # ant
 
-            # Development tools
-            lombok
+            # Optional: Spring Boot CLI
+            # spring-boot-cli
 
-            # Testing frameworks (via Maven/Gradle)
-            # junit, mockito, testng (added via project dependencies)
+            # Optional: Development tools
+            # lombok
 
-            # Code quality
-            checkstyle
-
-            # Documentation
-            # javadoc (included in JDK)
+            # Optional: Code quality
+            # checkstyle
           ];
 
           shellHook = ''
             echo "☕ Java environment loaded"
-            echo "Java: $(java -version 2>&1 | head -n1)"
-            echo "Maven: $(mvn --version | head -n1)"
-            echo "Gradle: $(gradle --version | grep Gradle)"
             export PROJECT_ROOT=$PWD
             export JAVA_HOME=${pkgs.jdk21}
-
-            # Set up Java options
-            export _JAVA_OPTIONS="-Xmx2g -XX:+UseG1GC"
-
-            # Maven local repository in project
-            export MAVEN_OPTS="-Dmaven.repo.local=$PWD/.m2/repository"
-
-            # Gradle cache in project
-            export GRADLE_USER_HOME=$PWD/.gradle
-
-            if [ ! -f "pom.xml" ] && [ ! -f "build.gradle" ] && [ ! -f "build.gradle.kts" ]; then
-              echo "💡 Initialize project with:"
-              echo "   Maven:  mvn archetype:generate"
-              echo "   Gradle: gradle init"
-              echo "   Spring: spring init --dependencies=web ."
-            fi
-
-            echo "🔧 Build tools: Maven, Gradle, Ant, Spring Boot CLI"
           '';
         };
       }

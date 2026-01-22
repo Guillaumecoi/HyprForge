@@ -18,59 +18,50 @@
           buildInputs = with pkgs; [
             # Compilers
             gcc
-            clang
-            llvm
 
-            # Build systems
+            # Build system
             cmake
             gnumake
-            ninja
-            meson
-
-            # Debuggers and profilers
-            gdb
-            lldb
-            valgrind
-
-            # Static analysis and formatting
-            clang-tools # includes clang-format, clang-tidy
-            cppcheck
-
-            # Package managers
-            conan
-            vcpkg
-
-            # Libraries (common ones)
-            boost
-            catch2
-            gtest
-
-            # Documentation
-            doxygen
 
             # Development tools
-            ccache
+            gdb
             pkg-config
+
+            # Optional: Additional compilers
+            # clang
+            # llvm
+
+            # Optional: Build systems
+            # ninja
+            # meson
+
+            # Optional: Debugging and profiling
+            # lldb
+            # valgrind
+
+            # Optional: Static analysis and formatting
+            # clang-tools  # includes clang-format, clang-tidy
+            # cppcheck
+
+            # Optional: Package managers
+            # conan
+            # vcpkg
+
+            # Optional: Testing libraries
+            # boost
+            # catch2
+            # gtest
+
+            # Optional: Documentation
+            # doxygen
+
+            # Optional: Performance
+            # ccache
           ];
 
           shellHook = ''
             echo "⚙️  C++ environment loaded"
-            echo "GCC: $(gcc --version | head -n1)"
-            echo "Clang: $(clang --version | head -n1)"
-            echo "CMake: $(cmake --version | head -n1)"
-            echo "Available: gdb, valgrind, clang-format, cppcheck"
             export PROJECT_ROOT=$PWD
-
-            # Set up ccache
-            export CC="ccache gcc"
-            export CXX="ccache g++"
-
-            # Create build directory if it doesn't exist
-            if [ ! -d "build" ]; then
-              echo "💡 Run 'cmake -B build' to generate build files"
-            fi
-
-            echo "🔧 Build systems: CMake, Make, Ninja, Meson"
           '';
         };
       }

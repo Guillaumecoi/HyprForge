@@ -18,82 +18,48 @@
           buildInputs = with pkgs; [
             # PCB Design
             kicad
+            # kicad-small # Lightweight version of KiCad
 
             # 3D CAD
             freecad
             openscad
 
-            # Electronics simulation
-            ngspice
+            # Basic tools
+            # gnumake # Build automation tool
 
-            # Arduino and embedded development
-            arduino
-            arduino-cli
-            platformio
+            # Optional: Electronics simulation
+            # ngspice
 
-            # 3D printing
-            prusa-slicer
-            cura
-            openscad
+            # Optional: Arduino and embedded
+            # arduino
+            # arduino-cli
+            # platformio
+            # avrdude
+            # esptool
 
-            # Circuit design
-            # fritzing  # Can be added if available
+            # Optional: 3D printing
+            # prusa-slicer
+            # cura
 
-            # Microcontroller tools
-            avrdude
-            esptool
+            # Optional: Python scripting
+            # python3
+            # python3Packages.pyserial
+            # python3Packages.numpy
+            # python3Packages.matplotlib
 
-            # Python for hardware scripting
-            python3
-            python3Packages.pyserial
-            python3Packages.numpy
-            python3Packages.matplotlib
+            # Optional: Documentation
+            # pandoc
+            # graphviz
 
-            # Version control for hardware
-            git
-            git-lfs
-
-            # Documentation
-            pandoc
-            graphviz
-
-            # File viewers
-            gerbv # Gerber file viewer
-
-            # Additional tools
-            gnumake
-            cmake
+            # Optional: File viewers
+            # gerbv  # Gerber file viewer
+            # git-lfs
+            # cmake
           ];
 
           shellHook = ''
             echo "🔧 CAD/Hardware environment loaded"
-            echo ""
-            echo "🖥️  PCB Design: KiCad"
-            echo "📐 3D CAD: FreeCAD, OpenSCAD"
-            echo "🔌 Electronics: ngspice, qucs"
-            echo "⚡ Arduino: arduino-cli, platformio, avrdude"
-            echo "🖨️  3D Printing: PrusaSlicer, Cura"
             export PROJECT_ROOT=$PWD
-
-            # Create common project directories
-            mkdir -p pcb cad firmware docs
-
-            # Set up Arduino CLI
-            if [ ! -d "$HOME/.arduino15" ]; then
-              echo "💡 Run 'arduino-cli core update-index' to initialize Arduino"
-            fi
-
-            echo ""
-            echo "📁 Directories created: pcb/, cad/, firmware/, docs/"
-            echo ""
-            echo "💡 Quick starts:"
-            echo "   KiCad:     kicad"
-            echo "   FreeCAD:   freecad"
-            echo "   OpenSCAD:  openscad"
-            echo "   Arduino:   arduino-cli board list"
-            echo "   PlatformIO: pio init"
-            echo ""
-            echo "🔗 Useful for: PCB design, 3D modeling, embedded systems, IoT"
           '';
         };
       }
