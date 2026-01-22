@@ -15,8 +15,7 @@ On any Linux machine:
 
 ```bash
 # Download the latest NixOS minimal ISO
-wget https://channels.nixos.org/nixos-unstable/latest-nixos-minimal-x86_64-linux.iso >> install.sh
-sudo bash install.sh
+wget https://channels.nixos.org/nixos-unstable/latest-nixos-minimal-x86_64-linux.iso
 
 # Find your USB drive (e.g., /dev/sdb)
 lsblk
@@ -64,7 +63,8 @@ ping -c 3 google.com
 
 ```bash
 # Download and run the installer
-sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/GuillaumeCoi/HyprForge/main/install/install.sh)"
+curl https://raw.githubusercontent.com/GuillaumeCoi/HyprForge/main/install/install.sh >> install.sh
+sudo bash install.sh
 ```
 
 **Option B: Manual clone first (recommended to review)**
@@ -111,7 +111,32 @@ The installer will ask you:
 
 8. **Password** - You'll set your user password at the end
 
-## Step 6: Reboot
+## Step 6: Home Manager Setup
+
+The installer automatically:
+1. Copies HyprForge to `~/HyprForge`
+2. Attempts to set up Home Manager (user environment)
+
+**If Home Manager setup succeeds during installation:**
+- You're all set! Skip to Step 7.
+
+**If Home Manager setup is pending:**
+- A setup script will be created at `~/.setup-home-manager.sh`
+- It will run automatically on first login
+- Or you can run it manually after logging in
+
+**If you need to set up Home Manager manually later:**
+
+```bash
+# Run the post-install script
+bash ~/HyprForge/install/post-install.sh
+
+# Or manually:
+cd ~/HyprForge
+home-manager switch --flake .#$(whoami)@$(hostname)
+```
+
+## Step 7: Reboot
 
 After installation completes:
 
@@ -124,10 +149,11 @@ Remove the USB drive when prompted. Your system will boot into the new NixOS ins
 ## First Login
 
 1. Log in with your username and password
-2. You'll be in Hyprland (the window manager)
-3. Press `SUPER + F1` to see all keybindings
-4. Press `SUPER + T` for a terminal
-5. Press `SUPER + A` for the application launcher
+2. If Home Manager wasn't set up yet, run `~/.setup-home-manager.sh` (or it may run automatically)
+3. You'll be in Hyprland (the window manager)
+4. Press `SUPER + SLASH` to see all keybindings
+5. Press `SUPER + T` for a terminal (kitty)
+6. Press `SUPER + A` for the application launcher
 
 ## Next Steps
 
@@ -135,6 +161,46 @@ Remove the USB drive when prompted. Your system will boot into the new NixOS ins
 - **[Keybindings](../docs/KEYBINDINGS.md)** - Complete keybinding reference
 - **[FAQ](../docs/FAQ.md)** - Frequently asked questions
 - **[Troubleshooting](../docs/TROUBLESHOOTING.md)** - Common issues and solutions
+
+## Post-Installation: Setting Up an Existing System
+
+If you already installed NixOS but didn't run the full installer (or Home Manager wasn't set up), use the post-install script:
+
+```bash
+# Option 1: If you already have HyprForge in /etc/nixos
+bash /etc/nixos/install/post-install.sh
+
+# Option 2: Clone fresh and run
+git clone https://github.com/GuillaumeCoi/HyprForge.git ~/HyprForge
+bash ~/HyprForge/install/post-install.sh
+
+# Option 3: Manual setup
+cp -r /etc/nixos ~/HyprForge  # Copy config to home
+cd ~/HyprForge
+home-manager switch --flake .#$(whoami)@$(hostname)
+```
+
+This will:
+- Copy HyprForge to your home directory
+- Set up Home Manager with all user applications
+- Configure Hyprland, kitty, and all other user-level tools
+
+## Understanding the Two-Part Installation
+
+HyprForge uses a two-part configuration:
+
+1. **System Configuration** (`/etc/nixos/`)
+   - Base system packages and services
+   - Requires root/sudo to modify
+   - Updated with: `sudo nixos-rebuild switch --flake /etc/nixos#hostname`
+
+2. **User Configuration** (`~/HyprForge/`)
+   - User applications (kitty, firefox, rofi, etc.)
+   - Hyprland settings and keybindings
+   - Per-user customization
+   - Updated with: `home-manager switch --flake ~/HyprForge#user@hostname`
+
+Both configurations work together to provide the complete HyprForge experience.
 
 ## Disk Layout
 
