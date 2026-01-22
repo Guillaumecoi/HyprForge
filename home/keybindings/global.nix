@@ -8,8 +8,9 @@
 #
 # This file returns Hyprland-compatible keybinding configuration
 let
-  # Prefer canonical apps defined in ../apps.nix, fallback to environment.nix
-  apps = import ../apps.nix;
+  # Prefer canonical apps defined in ../environment/apps.nix
+  appsModule = import ../environment/apps.nix;
+  apps = appsModule.apps;
 in
 {
   # Main modifier key

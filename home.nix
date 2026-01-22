@@ -72,6 +72,7 @@ in
     ./home/scripts.nix
     ./home/environment.nix
     ./home/theme.nix
+    ./theme/xdg.nix
   ]
   ++ programImports;
 

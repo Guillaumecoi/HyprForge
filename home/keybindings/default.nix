@@ -20,7 +20,8 @@ let
   local = import ./local.nix;
 
   # Import apps configuration from parent directory
-  apps = import ../apps.nix;
+  appsModule = import ../environment/apps.nix;
+  apps = appsModule.apps;
 
   # Destructure converters for convenience
   inherit (converters)
