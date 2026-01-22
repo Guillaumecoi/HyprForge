@@ -7,7 +7,9 @@
   hasNvidiaGpu = true;
 
   # Swap configuration
-  swapDevice = "/dev/disk/by-uuid/6e40e034-e983-40c5-ae26-85d239970db0";
+  # For encrypted swap: set to null (hardware-configuration.nix handles it)
+  # For unencrypted swap: set to "/dev/disk/by-uuid/YOUR-SWAP-UUID"
+  swapDevice = null;
   swapSizeGB = 16;
 
   # Printer configuration (empty list = no printing)

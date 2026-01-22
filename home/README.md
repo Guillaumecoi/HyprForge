@@ -38,7 +38,7 @@ This is required for Nix flakes to see them (they won't be committed due to .git
 
 - **home-config.nix** - Personal user settings (gitignored)
 - **packages.nix** - User packages by category (gitignored)
-- **environment.nix** - Environment variables, XDG directories
+- \*_environment/_ - Environment variables, XDG directories
 - **scripts.nix** - Auto-wraps scripts from `scripts/`
 - **keybindings/** - Central keybinding system
 - **programs/** - Per-app configs (auto-imported)

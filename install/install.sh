@@ -379,22 +379,29 @@ partition_disk() {
         print_warning "Choose a strong passphrase - you'll need it every time you boot!"
         echo ""
 
+        # First encrypt root partition (this will ask for passphrase)
         if [[ $SWAP_SIZE_GB -gt 0 ]]; then
-            print_info "Encrypting swap partition..."
-            cryptsetup luksFormat --type luks2 "${part_prefix}2"
-            print_info "Opening encrypted swap..."
-            cryptsetup open "${part_prefix}2" cryptswap
-            print_info "Formatting encrypted swap..."
-            mkswap /dev/mapper/cryptswap
-            print_info "Enabling swap..."
-            swapon /dev/mapper/cryptswap
-
             print_info "Encrypting root partition..."
             cryptsetup luksFormat --type luks2 "${part_prefix}3"
             print_info "Opening encrypted root..."
             cryptsetup open "${part_prefix}3" cryptroot
             print_info "Formatting encrypted root..."
             mkfs.ext4 -F /dev/mapper/cryptroot
+
+            # Create a keyfile for automatic swap unlock
+            print_info "Creating keyfile for swap encryption..."
+            dd bs=512 count=4 if=/dev/random of=/tmp/crypto_keyfile.bin iflag=fullblock 2>/dev/null
+            chmod 000 /tmp/crypto_keyfile.bin
+
+            # Encrypt swap with keyfile (no passphrase prompt)
+            print_info "Encrypting swap partition with keyfile..."
+            cryptsetup luksFormat --type luks2 "${part_prefix}2" /tmp/crypto_keyfile.bin
+            print_info "Opening encrypted swap..."
+            cryptsetup open "${part_prefix}2" cryptswap --key-file /tmp/crypto_keyfile.bin
+            print_info "Formatting encrypted swap..."
+            mkswap /dev/mapper/cryptswap
+            print_info "Enabling swap..."
+            swapon /dev/mapper/cryptswap
         else
             print_info "Encrypting root partition..."
             cryptsetup luksFormat --type luks2 "${part_prefix}2"
@@ -475,8 +482,10 @@ setup_dotfiles() {
     nixos-generate-config --root /mnt --show-hardware-config > /mnt/etc/nixos/hardware-configuration.nix
 
     # Get swap UUID if swap exists
+    # For encrypted swap, leave empty (null) since hardware-configuration.nix handles it
+    # For unencrypted swap, get the partition UUID for configuration.nix to use
     local swap_uuid=""
-    if [[ -n "${SWAP_PART}" ]]; then
+    if [[ -n "${SWAP_PART}" ]] && [[ "${ENCRYPT_OS}" != "true" ]]; then
         swap_uuid=$(blkid -s UUID -o value "${SWAP_PART}")
     fi
 
@@ -515,16 +524,39 @@ EOF
                 cat >> /mnt/etc/nixos/hardware-configuration.nix << EOF
     cryptswap = {
       device = "/dev/disk/by-uuid/${swap_uuid_crypt}";
-      preLVM = true;
+      keyFile = "/crypto_keyfile.bin";
     };
 EOF
             fi
 
-            # Close the LUKS devices block and the main config
+            # Close the LUKS devices block
             cat >> /mnt/etc/nixos/hardware-configuration.nix << EOF
   };
+EOF
+
+            # Add keyfile to initrd if swap is encrypted
+            if [[ $SWAP_SIZE_GB -gt 0 ]]; then
+                cat >> /mnt/etc/nixos/hardware-configuration.nix << EOF
+
+  # Include the keyfile in initrd
+  boot.initrd.secrets = {
+    "/crypto_keyfile.bin" = "/crypto_keyfile.bin";
+  };
+EOF
+            fi
+
+            # Close the main config
+            cat >> /mnt/etc/nixos/hardware-configuration.nix << EOF
 }
 EOF
+
+            # Copy keyfile to the mounted root if swap is encrypted
+            if [[ $SWAP_SIZE_GB -gt 0 ]]; then
+                print_info "Installing keyfile to system..."
+                cp /tmp/crypto_keyfile.bin /mnt/crypto_keyfile.bin
+                chmod 000 /mnt/crypto_keyfile.bin
+                rm /tmp/crypto_keyfile.bin
+            fi
         fi
     fi
 

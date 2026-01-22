@@ -20,7 +20,19 @@
       fsType = "ext4";
     };
 
-  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/4ae05a3e-1e33-4303-9c54-b54a45b302ff";
+  boot.initrd.luks.devices."cryptroot" = {
+    device = "/dev/disk/by-uuid/4ae05a3e-1e33-4303-9c54-b54a45b302ff";
+  };
+
+  boot.initrd.luks.devices."cryptswap" = {
+    device = "/dev/disk/by-uuid/af3285ab-762e-46b6-a624-a973b579700e";
+    keyFile = "/crypto_keyfile.bin";
+  };
+
+  # Include the keyfile in initrd
+  boot.initrd.secrets = {
+    "/crypto_keyfile.bin" = "/crypto_keyfile.bin";
+  };
 
   fileSystems."/boot" =
     {
