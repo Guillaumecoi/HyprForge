@@ -11,7 +11,8 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
         python = pkgs.python3;
-      in {
+      in
+      {
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
             python

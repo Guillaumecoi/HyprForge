@@ -10,8 +10,8 @@
 # - ALT key: Quick access - tab numbers, alternative actions (local.nix)
 # - CTRL+ALT: System/AI actions (local.nix)
 # - Vim keys (hjkl): Navigation in vim-enabled apps (local.nix)
-{
-  lib ? import <nixpkgs/lib>,
+{ lib ? import <nixpkgs/lib>
+,
 }:
 
 let

@@ -114,13 +114,16 @@ The installer will ask you:
 ## Step 6: Home Manager Setup
 
 The installer automatically:
+
 1. Copies HyprForge to `~/HyprForge`
 2. Attempts to set up Home Manager (user environment)
 
 **If Home Manager setup succeeds during installation:**
+
 - You're all set! Skip to Step 7.
 
 **If Home Manager setup is pending:**
+
 - A setup script will be created at `~/.setup-home-manager.sh`
 - It will run automatically on first login
 - Or you can run it manually after logging in
@@ -145,6 +148,21 @@ reboot
 ```
 
 Remove the USB drive when prompted. Your system will boot into the new NixOS installation.
+
+## Important: Machine-Specific Files
+
+The installation script generates two machine-specific files:
+
+- `user.nix` - Your username, hostname, hardware settings (GPU, printers), and Git config
+- `hardware-configuration.nix` - Auto-detected hardware configuration (kernel modules, filesystems, etc.)
+
+**These files are gitignored** because they're unique to each machine. When cloning this repo to a new machine:
+
+1. Copy the `.example` files: `cp user.nix.example user.nix`
+2. Edit `user.nix` with your machine's details
+3. Generate hardware config: `sudo nixos-generate-config --show-hardware-config > hardware-configuration.nix`
+
+This keeps the repository clean while allowing easy setup on multiple machines.
 
 ## First Login
 
@@ -181,6 +199,7 @@ home-manager switch --flake .#$(whoami)@$(hostname)
 ```
 
 This will:
+
 - Copy HyprForge to your home directory
 - Set up Home Manager with all user applications
 - Configure Hyprland, kitty, and all other user-level tools
@@ -216,11 +235,11 @@ The installer creates this partition scheme:
 
 **With LUKS encryption enabled:**
 
-| Partition | Size         | Type            | Mount |
-| --------- | ------------ | --------------- | ----- |
-| EFI       | 512MB        | FAT32           | /boot |
-| Swap      | User-defined | Encrypted swap  | -     |
-| Root      | Remaining    | Encrypted ext4  | /     |
+| Partition | Size         | Type           | Mount |
+| --------- | ------------ | -------------- | ----- |
+| EFI       | 512MB        | FAT32          | /boot |
+| Swap      | User-defined | Encrypted swap | -     |
+| Root      | Remaining    | Encrypted ext4 | /     |
 
 Both swap and root partitions are encrypted with LUKS2. You'll enter your passphrase once at boot to unlock both.
 

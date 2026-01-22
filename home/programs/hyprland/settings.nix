@@ -1,6 +1,6 @@
 {
   # Monitor configuration
-  monitor = ",1920x1080,auto,1";
+  monitor = ",preferred,auto,1";
 
   # Hyprland-specific environment variables
   # Note: Theme env vars are also set in home/environment.nix for non-Hyprland apps

@@ -66,6 +66,7 @@ flake.nix
 ### The Problem It Solves
 
 Traditional Linux systems obscure what's installed:
+
 - Hidden dependencies
 - Orphaned packages
 - Mystery bloat
@@ -137,6 +138,7 @@ in
 #### Why This Is Awesome
 
 **Benefits:**
+
 1. **Single source of truth** - One list, everything visible
 2. **No duplication** - Don't specify both `home.packages.firefox` and `programs.firefox.enable`
 3. **Automatic optimization** - System detects HM modules and enables them
@@ -144,6 +146,7 @@ in
 5. **Comments work** - Document why you installed something
 
 **Example:**
+
 ```nix
 [
   "obs-studio"     # Has HM module → programs.obs-studio.enable = true
@@ -169,6 +172,7 @@ Update: `./home/local-scripts/update-hm-programs.sh`
 ### The Problem
 
 Changing a keybinding like "new tab" requires editing:
+
 - Kitty config
 - Firefox settings
 - VSCode keybindings
@@ -282,6 +286,7 @@ homeswitch  # All apps get new keybindings automatically
 ```
 
 This propagates to:
+
 - Hyprland keybindings (`$TERMINAL`)
 - Environment variables (`$TERMINAL`, `$EDITOR`)
 - Rofi defaults
@@ -292,11 +297,13 @@ This propagates to:
 ### Why This Architecture Works
 
 **Separation of Concerns:**
+
 - **Definition** (local.nix, global.nix) - What the shortcut is
 - **Translation** (converters.nix) - How each app wants it formatted
-- **Application** (programs/*/nix) - Where it's used
+- **Application** (programs/\*/nix) - Where it's used
 
 **Benefits:**
+
 1. **Single source of truth** - One place to change shortcuts
 2. **Consistency** - Same shortcut does same thing everywhere
 3. **Maintainability** - Add new app once, keybindings follow
@@ -364,11 +371,13 @@ in
 ### Why Auto-Import?
 
 **Reduces boilerplate:**
+
 - No manual imports in home.nix
 - No maintenance when adding programs
 - Directory structure = configuration structure
 
 **Convention over configuration:**
+
 - Predictable: `programs/foo/foo.nix`
 - Self-documenting
 - Easy to navigate
@@ -380,6 +389,7 @@ in
 ### The Home Manager Advantage
 
 Home Manager provides:
+
 - Declarative user configuration
 - File management (`home.file`)
 - XDG directory setup
@@ -389,6 +399,7 @@ Home Manager provides:
 ### Why Not Just NixOS Modules?
 
 **System vs User:**
+
 - System modules require `sudo` to change
 - User modules are per-user, no root needed
 - Home Manager manages dotfiles, NixOS manages system
@@ -467,14 +478,17 @@ outputs = { nixpkgs, home-manager, ... }@inputs:
 ### Why Flakes?
 
 **Reproducibility:**
+
 - `flake.lock` pins exact versions
 - Same config → identical result anywhere
 
 **Composability:**
+
 - Easy to pull modules from other sources
 - Clean dependency management
 
 **Modern:**
+
 - Standard for new Nix projects
 - Better than channels for complex setups
 
@@ -489,6 +503,7 @@ sudo nixos-rebuild switch --flake ~/HyprForge#$(hostname)
 ```
 
 **What happens:**
+
 1. Flake evaluates with your hostname
 2. `configuration.nix` loaded with all system modules
 3. `user.nix` provides machine-specific settings
@@ -504,6 +519,7 @@ home-manager switch --flake ~/HyprForge#$(hostname)
 ```
 
 **What happens:**
+
 1. Flake evaluates `homeConfigurations`
 2. `home.nix` processes package list
 3. Programs auto-detected and enabled
@@ -544,11 +560,13 @@ keybindings/* (centralized)
 ### Explicit Over Implicit
 
 **Traditional:**
+
 - Hidden dependencies
 - Auto-installed recommends
 - Mystery background services
 
 **HyprForge:**
+
 - Everything declared explicitly
 - No hidden packages
 - Services visible in config
@@ -556,6 +574,7 @@ keybindings/* (centralized)
 ### Declarative Configuration
 
 **Imperative (traditional):**
+
 ```bash
 sudo apt install firefox
 cp firefox-config ~/.mozilla/
@@ -563,6 +582,7 @@ sudo systemctl enable bluetooth
 ```
 
 **Declarative (HyprForge):**
+
 ```nix
 home.packages = [ "firefox" ];
 programs.firefox.profiles.default = { /* ... */ };
@@ -570,6 +590,7 @@ services.bluetooth.enable = true;
 ```
 
 **Benefits:**
+
 - Reproducible
 - Version controlled
 - Rollback-able
@@ -578,14 +599,17 @@ services.bluetooth.enable = true;
 ### Convention Over Configuration
 
 **Auto-import programs:**
+
 - Create `programs/myapp/myapp.nix`
 - No manual import needed
 
 **Auto-wrap scripts:**
+
 - Drop `script.sh` in `scripts/`
 - Available in `$PATH` immediately
 
 **Auto-enable HM modules:**
+
 - Add to `packages.nix`
 - System detects if HM module exists
 - Enables automatically
@@ -593,11 +617,13 @@ services.bluetooth.enable = true;
 ### Separation of Concerns
 
 **Clear boundaries:**
+
 - System vs User
 - Global vs Local keybindings
 - Packages vs Configuration
 
 **Result:**
+
 - Easy to understand
 - Simple to maintain
 - Clear where to make changes
@@ -605,19 +631,22 @@ services.bluetooth.enable = true;
 ### Maintainability First
 
 **Priorities:**
+
 1. **Readable** - Code should explain itself
 2. **Modular** - Change one thing without affecting others
 3. **Consistent** - Same patterns throughout
-4. **Documented** - Comments explain *why*
+4. **Documented** - Comments explain _why_
 
 ### The Unix Philosophy Applied
 
 **Do one thing well:**
+
 - `packages.nix` - Just list packages
 - `keybindings/` - Just define shortcuts
 - `programs/` - Just configure apps
 
 **Compose tools:**
+
 - Keybindings + Converters + Programs = Consistent shortcuts
 - Package list + HM detection + Auto-enable = Simple management
 
@@ -712,6 +741,7 @@ Potential improvements to the architecture:
 ### Maintaining Backwards Compatibility
 
 When changing architecture:
+
 - Keep old patterns working temporarily
 - Document migration path
 - Provide migration scripts if needed
@@ -723,15 +753,18 @@ When changing architecture:
 To understand this architecture deeper:
 
 ### NixOS Concepts
+
 - [NixOS Manual](https://nixos.org/manual/nixos/stable/)
 - [Nix Pills](https://nixos.org/guides/nix-pills/) - Learn Nix language
 - [Zero to Nix](https://zero-to-nix.com/) - Modern Nix guide
 
 ### Home Manager
+
 - [Home Manager Manual](https://nix-community.github.io/home-manager/)
 - [Home Manager Options](https://mipmip.github.io/home-manager-option-search/)
 
 ### Flakes
+
 - [Flakes Wiki](https://nixos.wiki/wiki/Flakes)
 - [Practical Nix Flakes](https://serokell.io/blog/practical-nix-flakes)
 
@@ -740,6 +773,7 @@ To understand this architecture deeper:
 ## Conclusion
 
 HyprForge's architecture prioritizes:
+
 1. **Transparency** - See everything you have
 2. **Simplicity** - Easy to understand and modify
 3. **Consistency** - Same patterns throughout
@@ -750,6 +784,7 @@ The two-file package system and centralized keybindings demonstrate that good ar
 ---
 
 For more information:
+
 - [USAGE.md](USAGE.md) - How to use the system
 - [FAQ.md](FAQ.md) - Common questions
 - [PACKAGES.md](PACKAGES.md) - Complete package list

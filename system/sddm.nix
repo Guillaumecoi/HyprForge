@@ -1,9 +1,8 @@
 # sddm.nix - SDDM Display Manager Configuration with Catppuccin Theme
-{
-  config,
-  pkgs,
-  lib,
-  ...
+{ config
+, pkgs
+, lib
+, ...
 }:
 
 let

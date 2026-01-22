@@ -14,6 +14,7 @@ dev-init python-ml
 ```
 
 This will:
+
 1. Copy the template's `flake.nix` to your current directory
 2. Prompt you to edit it for your project's needs
 3. Create `.envrc` for automatic direnv activation
@@ -30,6 +31,7 @@ dev-init
 ### Using the Environment
 
 Once initialized, the environment activates automatically:
+
 ```bash
 cd ~/Projects/my-python-project  # Environment loads
 python --version                  # Python with ML packages available
@@ -41,16 +43,19 @@ cd ~                              # Environment unloads
 ### Template Structure
 
 Each template in `share/dev-templates/<template-name>/` contains:
+
 - **flake.nix** - Defines packages to install and environment setup
 
 ### Adding Custom Templates
 
 1. Create a new directory in `share/dev-templates/`:
+
 ```bash
 mkdir -p share/dev-templates/my-template
 ```
 
 2. Add a `flake.nix`:
+
 ```nix
 {
   # Short description of what this environment provides
@@ -137,6 +142,7 @@ mkdir -p share/dev-templates/my-template
     - Run initialization commands
 
 3. (Optional) Add an `install.sh` script:
+
 ```bash
 #!/usr/bin/env bash
 # This runs after dev-init copies files
@@ -160,6 +166,7 @@ echo "print('Hello')" > src/main.py
 ## Examples
 
 ### Python ML Project
+
 ```bash
 cd ~/Projects/ml-experiment
 dev-init python-ml
@@ -170,6 +177,7 @@ jupyter notebook
 ```
 
 ### Rust Project
+
 ```bash
 cd ~/Projects/my-cli-tool
 dev-init rust
@@ -179,6 +187,7 @@ cargo build
 ```
 
 ### Web Development
+
 ```bash
 cd ~/Projects/api-server
 dev-init python-web
@@ -187,6 +196,7 @@ python app.py  # Flask/FastAPI ready
 ```
 
 ### Node.js Project
+
 ```bash
 cd ~/Projects/web-app
 dev-init nodejs
@@ -196,6 +206,7 @@ npm install express
 ```
 
 ### VirtualBox VMs
+
 ```bash
 cd ~/Projects/vms
 dev-init virtualbox
@@ -206,6 +217,7 @@ VBoxManage createvm --name "MyVM" --register
 ```
 
 ### QEMU VMs
+
 ```bash
 cd ~/Projects/qemu-vms
 dev-init qemu
@@ -217,6 +229,7 @@ qemu-system-x86_64 -cdrom iso/ubuntu.iso -hda disk.qcow2 -m 4G
 ```
 
 **Finding Packages:**
+
 ```bash
 # Search for packages
 nix search nixpkgs python
@@ -226,7 +239,9 @@ nix search nixpkgs python3Packages.numpy
 ```
 
 ### Shell Hooks
+
 The `shellHook` runs when entering the environment:
+
 ```nix
 shellHook = ''
   echo "🚀 Environment loaded"
@@ -244,7 +259,9 @@ shellHook = ''
 ```
 
 ### Optional Setup Scripts
+
 Templates can include an `install.sh` script that runs once during initialization:
+
 ```bash
 #!/usr/bin/env bash
 # Runs automatically after dev-init copies files
@@ -276,6 +293,7 @@ echo "✅ Project initialized!"
 ```
 
 **Key differences:**
+
 - **shellHook**: Runs every time you enter the directory (sets env vars, displays info)
 - **install.sh**: Runs once during `dev-init` (creates files, initializes git, installs deps)
 

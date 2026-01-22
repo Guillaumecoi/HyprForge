@@ -1,10 +1,9 @@
 # home/wlogout.nix
-{
-  lib,
-  pkgs,
-  pkgs-unstable,
-  theme,
-  ...
+{ lib
+, pkgs
+, pkgs-unstable
+, theme
+, ...
 }:
 
 let

@@ -14,12 +14,15 @@ Complete keybinding guide for HyprForge. Press **SUPER+F1** anytime to see this 
 ## Philosophy
 
 **SUPER key** - Global window manager actions (Hyprland)
+
 - Window management, workspace switching, launchers
 
 **CTRL key** - Application-specific actions
+
 - Tabs, saving, editing, navigation within apps
 
 **ALT key** - Quick shortcuts and alternatives
+
 - Tab numbers, alternative navigation
 
 This separation prevents conflicts and creates muscle memory consistency.
@@ -30,63 +33,63 @@ This separation prevents conflicts and creates muscle memory consistency.
 
 ### Launchers
 
-| Shortcut | Action |
-|----------|--------|
-| `SUPER + T` | Open terminal (Kitty) |
-| `SUPER + E` | Open file explorer (Yazi in terminal) |
-| `SUPER + C` | Open text editor (VSCode) |
-| `SUPER + B` | Open web browser (Firefox) |
-| `SUPER + A` | Application launcher (Rofi) |
-| `SUPER + TAB` | Window switcher |
-| `SUPER + SHIFT + E` | File browser (Rofi) |
+| Shortcut            | Action                                |
+| ------------------- | ------------------------------------- |
+| `SUPER + T`         | Open terminal (Kitty)                 |
+| `SUPER + E`         | Open file explorer (Yazi in terminal) |
+| `SUPER + C`         | Open text editor (VSCode)             |
+| `SUPER + B`         | Open web browser (Firefox)            |
+| `SUPER + A`         | Application launcher (Rofi)           |
+| `SUPER + TAB`       | Window switcher                       |
+| `SUPER + SHIFT + E` | File browser (Rofi)                   |
 
 ### Utilities
 
-| Shortcut | Action |
-|----------|--------|
-| `SUPER + ,` | Emoji picker |
-| `SUPER + .` | Glyph/symbol picker |
-| `SUPER + /` | Keybinding help menu |
+| Shortcut     | Action               |
+| ------------ | -------------------- |
+| `SUPER + ,`  | Emoji picker         |
+| `SUPER + .`  | Glyph/symbol picker  |
+| `SUPER + /`  | Keybinding help menu |
 | `SUPER + F1` | Show all keybindings |
 
 ### Window Management
 
-| Shortcut | Action |
-|----------|--------|
-| `SUPER + Q` | Close focused window |
-| `SUPER + F` | Toggle fullscreen |
-| `SUPER + SHIFT + F` | Toggle floating |
-| `SUPER + ;` | Toggle split direction |
-| `SUPER + G` | Toggle window group |
-| `SUPER + W` | Toggle Waybar visibility |
+| Shortcut            | Action                   |
+| ------------------- | ------------------------ |
+| `SUPER + Q`         | Close focused window     |
+| `SUPER + F`         | Toggle fullscreen        |
+| `SUPER + SHIFT + F` | Toggle floating          |
+| `SUPER + ;`         | Toggle split direction   |
+| `SUPER + G`         | Toggle window group      |
+| `SUPER + W`         | Toggle Waybar visibility |
 
 ### Focus Navigation
 
-| Shortcut | Action |
-|----------|--------|
-| `SUPER + ←/H` | Focus window left |
-| `SUPER + →/L` | Focus window right |
-| `SUPER + ↑/K` | Focus window up |
-| `SUPER + ↓/J` | Focus window down |
-| `ALT + TAB` | Cycle focus forward |
+| Shortcut      | Action              |
+| ------------- | ------------------- |
+| `SUPER + ←/H` | Focus window left   |
+| `SUPER + →/L` | Focus window right  |
+| `SUPER + ↑/K` | Focus window up     |
+| `SUPER + ↓/J` | Focus window down   |
+| `ALT + TAB`   | Cycle focus forward |
 
 ### Window Resizing
 
-| Shortcut | Action |
-|----------|--------|
-| `SUPER + SHIFT + ←/H` | Resize left |
+| Shortcut              | Action       |
+| --------------------- | ------------ |
+| `SUPER + SHIFT + ←/H` | Resize left  |
 | `SUPER + SHIFT + →/L` | Resize right |
-| `SUPER + SHIFT + ↑/K` | Resize up |
-| `SUPER + SHIFT + ↓/J` | Resize down |
+| `SUPER + SHIFT + ↑/K` | Resize up    |
+| `SUPER + SHIFT + ↓/J` | Resize down  |
 
 ### Mouse Actions
 
-| Shortcut | Action |
-|----------|--------|
-| `SUPER + Left Click + Drag` | Move window |
-| `SUPER + Right Click + Drag` | Resize window |
-| `SUPER + Z + Drag` | Move window (keyboard) |
-| `SUPER + X + Drag` | Resize window (keyboard) |
+| Shortcut                     | Action                   |
+| ---------------------------- | ------------------------ |
+| `SUPER + Left Click + Drag`  | Move window              |
+| `SUPER + Right Click + Drag` | Resize window            |
+| `SUPER + Z + Drag`           | Move window (keyboard)   |
+| `SUPER + X + Drag`           | Resize window (keyboard) |
 
 ---
 
@@ -94,54 +97,54 @@ This separation prevents conflicts and creates muscle memory consistency.
 
 ### Navigation
 
-| Shortcut | Action |
-|----------|--------|
-| `SUPER + 1-9` | Switch to workspace 1-9 |
-| `SUPER + 0` | Switch to workspace 10 |
-| `SUPER + Mouse Wheel Up` | Previous workspace |
-| `SUPER + Mouse Wheel Down` | Next workspace |
-| `SUPER + CTRL + ←/H` | Previous workspace |
-| `SUPER + CTRL + →/L` | Next workspace |
-| `SUPER + CTRL + ↓/J` | Next empty workspace |
+| Shortcut                   | Action                  |
+| -------------------------- | ----------------------- |
+| `SUPER + 1-9`              | Switch to workspace 1-9 |
+| `SUPER + 0`                | Switch to workspace 10  |
+| `SUPER + Mouse Wheel Up`   | Previous workspace      |
+| `SUPER + Mouse Wheel Down` | Next workspace          |
+| `SUPER + CTRL + ←/H`       | Previous workspace      |
+| `SUPER + CTRL + →/L`       | Next workspace          |
+| `SUPER + CTRL + ↓/J`       | Next empty workspace    |
 
 ### Move Window to Workspace
 
-| Shortcut | Action |
-|----------|--------|
-| `SUPER + SHIFT + 1-9` | Move window to workspace 1-9 |
-| `SUPER + SHIFT + 0` | Move window to workspace 10 |
-| `SUPER + CTRL + SHIFT + ←/H` | Move to previous workspace |
-| `SUPER + CTRL + SHIFT + →/L` | Move to next workspace |
-| `SUPER + CTRL + SHIFT + ↓/J` | Move to empty workspace |
+| Shortcut                     | Action                       |
+| ---------------------------- | ---------------------------- |
+| `SUPER + SHIFT + 1-9`        | Move window to workspace 1-9 |
+| `SUPER + SHIFT + 0`          | Move window to workspace 10  |
+| `SUPER + CTRL + SHIFT + ←/H` | Move to previous workspace   |
+| `SUPER + CTRL + SHIFT + →/L` | Move to next workspace       |
+| `SUPER + CTRL + SHIFT + ↓/J` | Move to empty workspace      |
 
 ### Move Window Silently (Stay on Current Workspace)
 
-| Shortcut | Action |
-|----------|--------|
-| `SUPER + ALT + 1-9` | Move window to workspace 1-9 (silent) |
-| `SUPER + ALT + 0` | Move window to workspace 10 (silent) |
-| `SUPER + CTRL + ALT + ←/H` | Move to previous workspace (silent) |
-| `SUPER + CTRL + ALT + →/L` | Move to next workspace (silent) |
+| Shortcut                   | Action                                |
+| -------------------------- | ------------------------------------- |
+| `SUPER + ALT + 1-9`        | Move window to workspace 1-9 (silent) |
+| `SUPER + ALT + 0`          | Move window to workspace 10 (silent)  |
+| `SUPER + CTRL + ALT + ←/H` | Move to previous workspace (silent)   |
+| `SUPER + CTRL + ALT + →/L` | Move to next workspace (silent)       |
 
 ### Special Workspace (Scratchpad)
 
-| Shortcut | Action |
-|----------|--------|
-| `SUPER + S` | Toggle scratchpad visibility |
-| `SUPER + SHIFT + S` | Move window to scratchpad |
-| `SUPER + ALT + S` | Move window to scratchpad (silent) |
+| Shortcut            | Action                             |
+| ------------------- | ---------------------------------- |
+| `SUPER + S`         | Toggle scratchpad visibility       |
+| `SUPER + SHIFT + S` | Move window to scratchpad          |
+| `SUPER + ALT + S`   | Move window to scratchpad (silent) |
 
 ---
 
 ## Screen Capture
 
-| Shortcut | Action |
-|----------|--------|
-| `SUPER + P` | Screenshot selection (with annotation) |
-| `SUPER + CTRL + P` | Screenshot entire screen |
-| `SUPER + SHIFT + P` | Color picker (hyprpicker) |
-| `SUPER + ALT + P` | Screenshot current monitor |
-| `Print` | Screenshot all monitors |
+| Shortcut            | Action                                 |
+| ------------------- | -------------------------------------- |
+| `SUPER + P`         | Screenshot selection (with annotation) |
+| `SUPER + CTRL + P`  | Screenshot entire screen               |
+| `SUPER + SHIFT + P` | Color picker (hyprpicker)              |
+| `SUPER + ALT + P`   | Screenshot current monitor             |
+| `Print`             | Screenshot all monitors                |
 
 ---
 
@@ -149,15 +152,15 @@ This separation prevents conflicts and creates muscle memory consistency.
 
 ### Session
 
-| Shortcut | Action |
-|----------|--------|
-| `CTRL + ALT + Delete` | Logout menu (wlogout) |
-| `CTRL + ALT + L` | Lock screen (hyprlock) |
+| Shortcut              | Action                 |
+| --------------------- | ---------------------- |
+| `CTRL + ALT + Delete` | Logout menu (wlogout)  |
+| `CTRL + ALT + L`      | Lock screen (hyprlock) |
 
 ### Wallpaper
 
-| Shortcut | Action |
-|----------|--------|
+| Shortcut            | Action           |
+| ------------------- | ---------------- |
 | `SUPER + SHIFT + W` | Rotate wallpaper |
 
 ---
@@ -166,29 +169,29 @@ This separation prevents conflicts and creates muscle memory consistency.
 
 ### Volume
 
-| Shortcut | Action |
-|----------|--------|
-| `SUPER + F12` / `XF86AudioRaiseVolume` | Volume up |
-| `SUPER + F11` / `XF86AudioLowerVolume` | Volume down |
-| `SUPER + F10` / `XF86AudioMute` | Toggle mute |
-| `XF86AudioMicMute` | Toggle microphone mute |
+| Shortcut                               | Action                 |
+| -------------------------------------- | ---------------------- |
+| `SUPER + F12` / `XF86AudioRaiseVolume` | Volume up              |
+| `SUPER + F11` / `XF86AudioLowerVolume` | Volume down            |
+| `SUPER + F10` / `XF86AudioMute`        | Toggle mute            |
+| `XF86AudioMicMute`                     | Toggle microphone mute |
 
 ### Brightness
 
-| Shortcut | Action |
-|----------|--------|
-| `XF86MonBrightnessUp` | Increase screen brightness |
-| `XF86MonBrightnessDown` | Decrease screen brightness |
-| `XF86KbdBrightnessUp` | Increase keyboard backlight |
+| Shortcut                | Action                      |
+| ----------------------- | --------------------------- |
+| `XF86MonBrightnessUp`   | Increase screen brightness  |
+| `XF86MonBrightnessDown` | Decrease screen brightness  |
+| `XF86KbdBrightnessUp`   | Increase keyboard backlight |
 | `XF86KbdBrightnessDown` | Decrease keyboard backlight |
 
 ### Media Controls
 
-| Shortcut | Action |
-|----------|--------|
+| Shortcut              | Action           |
+| --------------------- | ---------------- |
 | `XF86AudioPlay/Pause` | Play/pause media |
-| `XF86AudioNext` | Next track |
-| `XF86AudioPrev` | Previous track |
+| `XF86AudioNext`       | Next track       |
+| `XF86AudioPrev`       | Previous track   |
 
 ---
 
@@ -200,41 +203,41 @@ These are centrally defined in [home/keybindings/local.nix](../home/keybindings/
 
 Works in: Firefox, Kitty, VSCode, Yazi
 
-| Shortcut | Action |
-|----------|--------|
-| `CTRL + T` | New tab |
-| `CTRL + W` | Close tab |
-| `CTRL + TAB` | Next tab |
-| `CTRL + SHIFT + TAB` | Previous tab |
-| `CTRL + SHIFT + T` | Reopen closed tab |
-| `ALT + 1-9` | Jump to tab 1-9 |
+| Shortcut             | Action            |
+| -------------------- | ----------------- |
+| `CTRL + T`           | New tab           |
+| `CTRL + W`           | Close tab         |
+| `CTRL + TAB`         | Next tab          |
+| `CTRL + SHIFT + TAB` | Previous tab      |
+| `CTRL + SHIFT + T`   | Reopen closed tab |
+| `ALT + 1-9`          | Jump to tab 1-9   |
 
 ### Editing (Universal)
 
 Works in most text editors and applications:
 
-| Shortcut | Action |
-|----------|--------|
-| `CTRL + S` | Save |
-| `CTRL + Z` | Undo |
-| `CTRL + SHIFT + Z` | Redo |
-| `CTRL + X` | Cut |
-| `CTRL + C` | Copy |
-| `CTRL + V` | Paste |
-| `CTRL + A` | Select all |
-| `CTRL + F` | Find |
-| `CTRL + H` | Find and replace |
+| Shortcut           | Action           |
+| ------------------ | ---------------- |
+| `CTRL + S`         | Save             |
+| `CTRL + Z`         | Undo             |
+| `CTRL + SHIFT + Z` | Redo             |
+| `CTRL + X`         | Cut              |
+| `CTRL + C`         | Copy             |
+| `CTRL + V`         | Paste            |
+| `CTRL + A`         | Select all       |
+| `CTRL + F`         | Find             |
+| `CTRL + H`         | Find and replace |
 
 ### Navigation
 
-| Shortcut | Action |
-|----------|--------|
-| `CTRL + ←` | Previous word |
-| `CTRL + →` | Next word |
-| `Home` | Start of line |
-| `End` | End of line |
+| Shortcut      | Action            |
+| ------------- | ----------------- |
+| `CTRL + ←`    | Previous word     |
+| `CTRL + →`    | Next word         |
+| `Home`        | Start of line     |
+| `End`         | End of line       |
 | `CTRL + Home` | Start of document |
-| `CTRL + End` | End of document |
+| `CTRL + End`  | End of document   |
 
 ---
 
@@ -245,6 +248,7 @@ Works in most text editors and applications:
 Pre-configured keybindings work automatically. Press `CTRL + F1` in Kitty to see app-specific shortcuts.
 
 Key features:
+
 - Tab management with `CTRL` modifier
 - Split management with `CTRL + SHIFT`
 - Scroll with `SHIFT + Page Up/Down`
@@ -270,6 +274,7 @@ Most shortcuts are Firefox defaults. Custom keybindings are limited due to Firef
 Press `CTRL + F1` in Yazi or check [home/programs/yazi/](../home/programs/yazi/) for custom mappings.
 
 Key navigation:
+
 - `j/k` - Up/down
 - `h/l` - Parent/enter directory
 - `Space` - Select files
@@ -282,6 +287,7 @@ Key navigation:
 ### Changing Shortcuts
 
 1. **For app shortcuts**, edit [home/keybindings/local.nix](../home/keybindings/local.nix):
+
 ```nix
 {
   tabs = {
@@ -292,12 +298,14 @@ Key navigation:
 ```
 
 2. **For window manager shortcuts**, edit [home/keybindings/global.nix](../home/keybindings/global.nix):
+
 ```nix
 "$mainMod, T, [Launcher|Apps] terminal, exec, $TERMINAL"
 # Change 'T' to your preferred key
 ```
 
 3. **Rebuild:**
+
 ```bash
 homeswitch
 ```
@@ -319,6 +327,7 @@ HyprForge's keybinding philosophy minimizes conflicts:
 - **ALT** - Quick actions (ALT+1-9 for tab switching)
 
 If you experience conflicts:
+
 1. Check which app is intercepting the shortcut
 2. Modify in the appropriate file (local.nix or global.nix)
 3. Rebuild with `homeswitch`
@@ -373,6 +382,7 @@ Both menus are searchable and categorized!
 ---
 
 For more information:
+
 - [USAGE.md](USAGE.md) - How to customize keybindings
 - [ARCHITECTURE.md](ARCHITECTURE.md) - How the keybinding system works
 - [home/keybindings/](../home/keybindings/) - Source keybinding definitions

@@ -2,6 +2,10 @@
 result
 result-*
 
+# Machine-specific configuration files
+user.nix
+hardware-configuration.nix
+
 # Editor files
 .vscode/
 .idea/

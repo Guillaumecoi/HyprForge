@@ -4,11 +4,10 @@
 #
 # AI Integration: Ctrl+Alt+I opens the AI CLI in current directory
 
-{
-  config,
-  pkgs,
-  lib,
-  ...
+{ config
+, pkgs
+, lib
+, ...
 }:
 
 let

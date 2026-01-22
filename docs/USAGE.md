@@ -18,6 +18,7 @@ Complete guide to using and customizing HyprForge.
 After editing configuration files, rebuild your system:
 
 ### System-level changes
+
 ```bash
 # For changes to configuration.nix, system packages, services, etc.
 sudo nixos-rebuild switch --flake ~/HyprForge#$(hostname)
@@ -27,6 +28,7 @@ alias sysswitch='sudo nixos-rebuild switch --flake ~/HyprForge#$(hostname)'
 ```
 
 ### Home Manager changes
+
 ```bash
 # For changes to home packages, program configs, keybindings, etc.
 home-manager switch --flake ~/HyprForge#$(hostname)
@@ -63,6 +65,7 @@ Edit [home/packages.nix](../home/packages.nix):
 ```
 
 Then rebuild:
+
 ```bash
 home-manager switch --flake ~/HyprForge#$(hostname)
 ```
@@ -88,6 +91,7 @@ When you add a package to `home/packages.nix`, the system automatically:
 3. If no → Installs as a regular package
 
 **Example:**
+
 ```nix
 [
   "git"      # Has HM module → programs.git.enable = true
@@ -114,6 +118,7 @@ home/programs/
 These are **automatically imported** by [home.nix](../home.nix). The import system scans the directory and loads all `<name>/<name>.nix` files.
 
 **To customize:**
+
 1. Edit the program's `.nix` file
 2. Run `homeswitch`
 3. Changes apply immediately
@@ -194,6 +199,7 @@ in {
 ```
 
 **Supported converters:**
+
 - `kb.toKitty` - Kitty terminal format
 - `kb.toYazi` - Yazi file manager format
 - `kb.toNeovim` - Neovim/Vim format
@@ -215,6 +221,7 @@ Edit [home/keybindings/apps.nix](../home/keybindings/apps.nix):
 ```
 
 These propagate to:
+
 - Hyprland keybindings (`SUPER+T` → terminal)
 - Environment variables (`$TERMINAL`, `$EDITOR`)
 - Script defaults
@@ -236,11 +243,13 @@ Add to [home/packages.nix](../home/packages.nix):
 ### Program with Custom Config
 
 1. **Create the program directory:**
+
 ```bash
 mkdir -p ~/HyprForge/home/programs/myapp
 ```
 
 2. **Create `myapp.nix`:**
+
 ```nix
 { config, pkgs, lib, ... }:
 
@@ -260,6 +269,7 @@ in {
 ```
 
 3. **Rebuild:**
+
 ```bash
 homeswitch
 ```
@@ -271,6 +281,7 @@ The file is **automatically imported** by `home.nix`!
 If your app needs custom keybindings:
 
 1. **Define keybindings in [local.nix](../home/keybindings/local.nix)**:
+
 ```nix
 {
   myapp = {
@@ -281,6 +292,7 @@ If your app needs custom keybindings:
 ```
 
 2. **Create converter in [converters.nix](../home/keybindings/converters.nix)**:
+
 ```nix
 {
   toMyApp = bindings: {
@@ -291,6 +303,7 @@ If your app needs custom keybindings:
 ```
 
 3. **Use in your program config**:
+
 ```nix
 let
   kb = import ../../keybindings { inherit lib; };
@@ -305,6 +318,7 @@ in {
 ## Common Commands
 
 ### Rebuild System
+
 ```bash
 # Full system rebuild
 sudo nixos-rebuild switch --flake ~/HyprForge#$(hostname)
@@ -314,6 +328,7 @@ home-manager switch --flake ~/HyprForge#$(hostname)
 ```
 
 ### Package Management
+
 ```bash
 # Search for packages
 nix search nixpkgs <name>
@@ -327,6 +342,7 @@ sudo nix-collect-garbage -d
 ```
 
 ### Flake Operations
+
 ```bash
 # Update all inputs (nixpkgs, home-manager, etc.)
 nix flake update
@@ -339,6 +355,7 @@ nix flake show
 ```
 
 ### Development Shells
+
 ```bash
 # Enter dev shell
 nix develop ~/HyprForge/share/dev-templates/python-ml
@@ -360,6 +377,7 @@ Most apps use the official Catppuccin modules automatically. This file is for ap
 ### Changing Wallpapers
 
 Add images to [share/wallpapers/](../share/wallpapers/):
+
 ```bash
 cp ~/Pictures/mywallpaper.jpg ~/HyprForge/share/wallpapers/
 homeswitch  # Copies to ~/Pictures/Wallpapers
@@ -370,6 +388,7 @@ Press `SUPER+SHIFT+W` to cycle through wallpapers.
 ### Modifying System Services
 
 Edit [system/services.nix](../system/services.nix):
+
 ```nix
 {
   # Enable/disable services
@@ -387,6 +406,7 @@ Edit [system/services.nix](../system/services.nix):
 ### Hardware Configuration
 
 Edit [user.nix](../user.nix):
+
 ```nix
 {
   username = "yourname";
@@ -444,6 +464,7 @@ alias nixclean='nix-collect-garbage -d && sudo nix-collect-garbage -d'
 ---
 
 For more details:
+
 - [Architecture Documentation](ARCHITECTURE.md) - How the system works internally
 - [Keybindings Reference](KEYBINDINGS.md) - Complete keybinding list
 - [Package List](PACKAGES.md) - All available packages

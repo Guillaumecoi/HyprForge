@@ -132,6 +132,6 @@
 
   # Help and documentation
   help = {
-    shortcuts = "ctrl+f1";  # Show app shortcuts/keybindings
+    shortcuts = "ctrl+f1"; # Show app shortcuts/keybindings
   };
 }

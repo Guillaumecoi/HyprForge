@@ -2,11 +2,10 @@
 # This file consolidates all environment variables and settings used across the system.
 # Default applications are defined in keybindings/apps.nix.
 
-{
-  config,
-  pkgs,
-  lib,
-  ...
+{ config
+, pkgs
+, lib
+, ...
 }:
 
 let

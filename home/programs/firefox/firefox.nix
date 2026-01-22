@@ -1,8 +1,7 @@
-{
-  config,
-  pkgs,
-  lib,
-  ...
+{ config
+, pkgs
+, lib
+, ...
 }:
 
 # Note: Shortcuts are hardcoded in Firefox and cannot be changed via NixOS configuration

@@ -9,12 +9,14 @@ HyprForge is a complete NixOS configuration featuring Hyprland (tiling window ma
 ### Why should I use this over a standard desktop environment?
 
 **Traditional DEs (GNOME, KDE):**
+
 - Bloated with unused features
 - Hard to customize deeply
 - Settings scattered everywhere
 - Difficult to reproduce on new machines
 
 **HyprForge:**
+
 - Minimal, fast, exactly what you need
 - Everything explicit in config files
 - One command to replicate your entire setup
@@ -23,6 +25,7 @@ HyprForge is a complete NixOS configuration featuring Hyprland (tiling window ma
 ### Is this only for advanced users?
 
 No! While NixOS has a learning curve, HyprForge makes it accessible:
+
 - Pre-configured everything
 - Clear documentation
 - Simple two-file package management
@@ -37,6 +40,7 @@ If you can edit a text file and run terminal commands, you can use this.
 ### Can I use this on existing NixOS?
 
 Yes! Clone the repo and run:
+
 ```bash
 git clone https://github.com/GuillaumeCoi/HyprForge.git ~/HyprForge
 cd ~/HyprForge
@@ -47,6 +51,7 @@ sudo nixos-rebuild switch --flake .#YOUR_HOSTNAME
 ### Can I use this without NixOS?
 
 No, this is specifically for NixOS. However, you can:
+
 - Use the Home Manager configs on other Linux distros (requires adaptation)
 - Steal individual program configs for your setup
 - Use the keybinding system concept elsewhere
@@ -54,6 +59,7 @@ No, this is specifically for NixOS. However, you can:
 ### What if I don't want Hyprland?
 
 You can adapt this for other window managers, but Hyprland is deeply integrated. You'd need to:
+
 - Replace [home/programs/hyprland/](../home/programs/hyprland/) configs
 - Update keybindings in [home/keybindings/global.nix](../home/keybindings/global.nix)
 - Modify [system/sddm.nix](../system/sddm.nix) for your display manager
@@ -79,6 +85,7 @@ Plus space for your files, of course.
 ### Where are all the packages listed?
 
 In just two files:
+
 - **[home/packages.nix](../home/packages.nix)** - User applications (browsers, editors, media players)
 - **[system/packages.nix](../system/packages.nix)** - System utilities (drivers, core tools)
 
@@ -87,6 +94,7 @@ That's it. Everything explicit. No hidden dependencies.
 ### How do I add/remove software?
 
 Edit [home/packages.nix](../home/packages.nix):
+
 ```nix
 [
   "firefox"
@@ -104,6 +112,7 @@ nix search nixpkgs <package-name>
 ```
 
 Example:
+
 ```bash
 nix search nixpkgs blender
 nix search nixpkgs "video editor"
@@ -112,6 +121,7 @@ nix search nixpkgs "video editor"
 ### What's this "Home Manager" thing?
 
 Home Manager manages user-level configuration declaratively. HyprForge automatically:
+
 - Detects if a package has a Home Manager module
 - Enables it with `programs.<name>.enable = true`
 - Applies default configs
@@ -133,6 +143,7 @@ For project-specific versions, use [dev templates](../share/dev-templates/README
 Most apps use Catppuccin Mocha automatically via the catppuccin/nix modules. For unsupported apps, edit [theme/theme.nix](../theme/theme.nix).
 
 To change to a different theme entirely:
+
 - Replace Catppuccin modules in [flake.nix](../flake.nix)
 - Update [theme/theme.nix](../theme/theme.nix) colors
 - Adjust per-app configs in [home/programs/](../home/programs/)
@@ -148,6 +159,7 @@ See [USAGE.md](USAGE.md#keybindings-system) for details.
 ### Can I use a different terminal?
 
 Yes! Edit [home/keybindings/apps.nix](../home/keybindings/apps.nix):
+
 ```nix
 {
   terminal = "alacritty";  # or "wezterm", "foot", etc.
@@ -161,6 +173,7 @@ Add the terminal to [home/packages.nix](../home/packages.nix), then rebuild.
 Drop `.sh` or `.py` files into [home/scripts/](../home/scripts/). They're automatically wrapped and added to `$PATH`.
 
 Example:
+
 ```bash
 echo '#!/bin/bash
 echo "Hello World"' > ~/HyprForge/home/scripts/hello.sh
@@ -203,6 +216,7 @@ Yes! Hyprland works perfectly with a mouse. Keybindings are available for speed,
 ### How do dev templates work?
 
 Templates provide isolated environments. Example:
+
 ```bash
 cd ~/Projects/my-python-project
 nix develop ~/HyprForge/share/dev-templates/python-ml
@@ -216,6 +230,7 @@ See [dev-templates/README.md](../share/dev-templates/README.md) for details.
 ### Can I have multiple Python versions?
 
 Yes! Create different templates with different Python versions:
+
 ```nix
 python39  # For project A
 python311 # For project B
@@ -228,6 +243,7 @@ Or use per-project `flake.nix` files to specify versions.
 Podman is included by default (Docker-compatible). It's rootless and more secure.
 
 Enable Docker if needed by uncommenting in [configuration.nix](../configuration.nix):
+
 ```nix
 virtualisation.docker.enable = true;
 ```
@@ -239,12 +255,14 @@ virtualisation.docker.enable = true;
 ### My changes aren't applying!
 
 Make sure you ran the right rebuild command:
+
 - System changes: `sudo nixos-rebuild switch --flake ~/HyprForge#$(hostname)`
 - User changes: `home-manager switch --flake ~/HyprForge#$(hostname)`
 
 ### I broke something, how do I rollback?
 
 NixOS keeps previous generations:
+
 ```bash
 # List generations
 sudo nix-env --list-generations --profile /nix/var/nix/profiles/system
@@ -271,6 +289,7 @@ At boot, you can also select previous generations from the bootloader.
 ### Screen is black after login
 
 Usually NVIDIA driver issues:
+
 - Ensure `hasNvidiaGpu = true` in [user.nix](../user.nix)
 - Try TTY2 (CTRL+ALT+F2) and rebuild
 - Check [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
@@ -309,6 +328,7 @@ Also check: `ncdu /nix/store` to see what's using space.
 ### Is this resource-heavy?
 
 No! Hyprland is lightweight:
+
 - ~300MB RAM idle (vs 1-2GB for GNOME/KDE)
 - Fast compositor (GPU-accelerated)
 - Only runs what you configure
@@ -320,12 +340,14 @@ No! Hyprland is lightweight:
 ### Why two files for packages?
 
 **Transparency.** Traditional Linux:
+
 - 800+ packages installed
 - Can't remember what's needed
 - Afraid to remove anything
 - Mystery dependencies everywhere
 
 **HyprForge:**
+
 - Open [home/packages.nix](../home/packages.nix) - that's everything you have
 - One line = one app
 - Delete line = completely gone, no orphans
@@ -333,6 +355,7 @@ No! Hyprland is lightweight:
 ### What's the deal with the keybinding system?
 
 Traditional problem: Want to change "new tab" from CTRL+T to CTRL+N?
+
 - Edit Kitty config
 - Edit Firefox shortcuts
 - Edit VSCode settings
@@ -344,6 +367,7 @@ HyprForge: Change one line in [home/keybindings/local.nix](../home/keybindings/l
 ### Why NixOS specifically?
 
 NixOS is the only Linux distro that makes entire systems reproducible:
+
 - Declarative configuration
 - Atomic upgrades/rollbacks
 - No dependency hell
@@ -362,11 +386,13 @@ Absolutely! MIT licensed. Fork it, customize it, make it yours.
 ### Should I keep my fork public or private?
 
 **Public** if you want to:
+
 - Share your setup
 - Get feedback
 - Help others learn
 
 **Private** if your configs contain:
+
 - Work-specific tools
 - Proprietary software
 - Personal information
@@ -384,6 +410,7 @@ Or cherry-pick specific commits.
 ### Can I contribute back?
 
 This is a personal configuration, but feel free to:
+
 - Report bugs
 - Suggest improvements
 - Share your fork

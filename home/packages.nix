@@ -32,6 +32,7 @@
   "taplo" # TOML formatter
   "nodePackages.prettier" # Prettier for JSON/CSS formatting
   "nodejs" # Node.js runtime
+  "appimage-run" # Lets you run appimages
 
   # API & HTTP Tools
   "httpie" # HTTP CLI client
@@ -94,10 +95,14 @@
   "bitwarden-cli" # Bitwarden CLI (primary interface for scripts)
   "bitwarden-desktop" # optional GUI client (uncomment if desired)
 
+  # keyring and secret management tools
+  "gnome-keyring" # Keyring service (for desktop integration)
+  "seahorse" # GUI for managing keyrings and passwords
+  "libsecret" # Secret Service library (for desktop integrations)
+
   # Minimal CLI tooling to integrate secrets into workflows
   "gnupg" # GPG for encrypted workflows
   "age" # Modern encryption tool
-  "libsecret" # Secret Service library (for desktop integrations)
 
   # ===== MULTIMEDIA ===== #
 

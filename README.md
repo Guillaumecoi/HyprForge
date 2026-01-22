@@ -18,7 +18,6 @@ Hyprland is an incredible tiling window manager, but it lacks essentials like a 
 
 This also solves problems almost everyone struggles with but doesn't know there's a solution for: package bloat, scattered settings, forgetting what software you installed and why. Keep reading to see how.
 
-
 ## The Problems Everyone Faces
 
 **Your system slowly becomes a mess:**
@@ -41,7 +40,7 @@ This also solves problems almost everyone struggles with but doesn't know there'
 
 ### 1. **Complete System Transparency**
 
-Your entire system is declared explicitly in two files: [`home/packages.nix`](home/packages.nix) (user apps) and [`system/packages.nix`](system/packages.nix)  (system tools).
+Your entire system is declared explicitly in two files: [`home/packages.nix`](home/packages.nix) (user apps) and [`system/packages.nix`](system/packages.nix) (system tools).
 
 ```nix
 home.packages = [ firefox spotify gimp ];  # That's it. Everything you have.
@@ -304,8 +303,18 @@ Then it installs everything automatically.
 ```bash
 git clone https://github.com/GuillaumeCoi/HyprForge.git ~/HyprForge
 cd ~/HyprForge
+
+# Copy example files and customize for your machine
 cp user.nix.example user.nix
+cp hardware-configuration.nix.example hardware-configuration.nix
+
 # Edit user.nix with your settings
+nano user.nix
+
+# Generate your actual hardware config
+sudo nixos-generate-config --show-hardware-config > hardware-configuration.nix
+
+# Apply the configuration
 sudo nixos-rebuild switch --flake .#YOUR_HOSTNAME
 ```
 

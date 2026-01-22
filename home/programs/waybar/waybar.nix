@@ -1,8 +1,7 @@
-{
-  pkgs,
-  pkgs-unstable,
-  theme,
-  ...
+{ pkgs
+, pkgs-unstable
+, theme
+, ...
 }:
 {
   programs.waybar = {

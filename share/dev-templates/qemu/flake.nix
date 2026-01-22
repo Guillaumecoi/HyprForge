@@ -24,12 +24,12 @@
             curl
 
             # Optional: VM Management
-            virt-manager  # GUI for managing VMs
+            virt-manager # GUI for managing VMs
             # libvirt  # VM management API
-            virtiofsd  # Shared folder support
+            virtiofsd # Shared folder support
 
             # Optional: Additional tools
-            ovmf  # UEFI firmware
+            ovmf # UEFI firmware
             # swtpm  # TPM emulator
 
             # Optional: Remote access

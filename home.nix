@@ -1,10 +1,9 @@
-{
-  config,
-  lib,
-  pkgs,
-  pkgs-unstable,
-  theme,
-  ...
+{ config
+, lib
+, pkgs
+, pkgs-unstable
+, theme
+, ...
 }:
 
 let
@@ -13,13 +12,15 @@ let
   # Automatically import all program modules from ./home/programs
   # Each program directory contains a .nix file with the same name (e.g. programs/git/git.nix)
   programEntries = builtins.attrNames (builtins.readDir ./home/programs);
-  programDirs = builtins.filter (
-    name:
-    let
-      entry = builtins.readDir ./home/programs;
-    in
-    entry.${name} == "directory"
-  ) programEntries;
+  programDirs = builtins.filter
+    (
+      name:
+      let
+        entry = builtins.readDir ./home/programs;
+      in
+      entry.${name} == "directory"
+    )
+    programEntries;
   programImports = map (dir: ./home/programs/${dir}/${dir}.nix) programDirs;
 
   # Import unified package list
@@ -53,12 +54,16 @@ let
     || builtins.elem baseName knownHmMisc;
 
   # Split packages by category
-  hmProgramModules = builtins.filter (
-    p: builtins.elem (builtins.head (lib.splitString "." p)) knownHmPrograms
-  ) packageList;
-  hmServiceModules = builtins.filter (
-    p: builtins.elem (builtins.head (lib.splitString "." p)) knownHmServices
-  ) packageList;
+  hmProgramModules = builtins.filter
+    (
+      p: builtins.elem (builtins.head (lib.splitString "." p)) knownHmPrograms
+    )
+    packageList;
+  hmServiceModules = builtins.filter
+    (
+      p: builtins.elem (builtins.head (lib.splitString "." p)) knownHmServices
+    )
+    packageList;
   barePackages = builtins.filter (p: !(hasHmModule p)) packageList;
 in
 
@@ -79,22 +84,26 @@ in
 
   # Auto-enable programs that have HM modules
   programs = builtins.listToAttrs (
-    map (name: {
-      name = name;
-      value = {
-        enable = true;
-      };
-    }) hmProgramModules
+    map
+      (name: {
+        name = name;
+        value = {
+          enable = true;
+        };
+      })
+      hmProgramModules
   );
 
   # Auto-enable services that have HM modules
   services = builtins.listToAttrs (
-    map (name: {
-      name = name;
-      value = {
-        enable = true;
-      };
-    }) hmServiceModules
+    map
+      (name: {
+        name = name;
+        value = {
+          enable = true;
+        };
+      })
+      hmServiceModules
   );
 
   # Copy files to their appropriate locations, overwriting existing ones

@@ -1,0 +1,21 @@
+{
+  # Hostname and username configuration
+  username = "youruser";
+  hostname = "yourhostname";
+
+  # System-specific hardware configuration
+  hasNvidiaGpu = false;
+
+  # Swap configuration
+  swapDevice = "/dev/disk/by-uuid/YOUR-SWAP-UUID";
+  swapSizeGB = 16;
+
+  # Printer configuration (empty list = no printing)
+  printerDrivers = [ ];
+
+  # Git configuration
+  git = {
+    fullName = "Your Name";
+    email = "your.email@example.com";
+  };
+}

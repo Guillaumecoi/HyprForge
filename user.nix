@@ -1,20 +1,19 @@
 {
   # Hostname and username configuration
   username = "guillaume";
-  hostname = "laptop-asus-i7";
+  hostname = "legion7";
 
   # System-specific hardware configuration
-  hasNvidiaGpu = true; # Set to true if you have NVIDIA GPU
+  hasNvidiaGpu = true;
 
   # Swap configuration
-  # Use the swap partition by stable UUID (set to null to disable)
-  swapDevice = "/dev/disk/by-uuid/f1bb39a4-4a43-427c-95b2-c5d08b774027"; # Path to swap file/partition (set to null to disable)
-  swapSizeGB = 8; # Swap size in GB (only used if swapDevice is a file)
+  swapDevice = "/dev/disk/by-uuid/6e40e034-e983-40c5-ae26-85d239970db0";
+  swapSizeGB = 16;
 
-  # Printer configuration  
-  printerDrivers = [ "epson-escpr2" "epson-escpr" ]; # List of printer driver package names (empty list = no printing)
+  # Printer configuration (empty list = no printing)
+  printerDrivers = [ "epson-escpr2" "epson-escpr" ];
 
-  # Git configuration
+  # Git configuration (to be configured later)
   git = {
     fullName = "GuillaumeCoi";
     email = "GuillaumeCoi@users.noreply.github.com";

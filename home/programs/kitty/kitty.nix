@@ -4,11 +4,10 @@
 # Tab management handled by kitty using central keybindings
 # AI Integration: Ctrl+Alt+I opens AI CLI
 
-{
-  config,
-  pkgs,
-  lib,
-  ...
+{ config
+, pkgs
+, lib
+, ...
 }:
 
 let
