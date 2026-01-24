@@ -100,6 +100,7 @@ in
     extraGroups = [
       "wheel"
       "networkmanager"
+      "vboxusers"
       # "docker"                   # Uncomment if using Docker
     ];
     shell = pkgs.zsh;
@@ -119,6 +120,8 @@ in
   };
 
   # Conditional swap configuration: handle partitions vs swap files
+  # If swapDevice is null, hardware-configuration.nix handles swap
+  # Otherwise, we can configure it here
   swapDevices = lib.mkIf (user.swapDevice != null)
     (
       let
@@ -141,6 +144,9 @@ in
     dockerCompat = true; # Docker compatibility
     defaultNetwork.settings.dns_enabled = true;
   };
+
+  # Enable VirtualBox host kernel modules
+  virtualisation.virtualbox.host.enable = true;
 
   nix.settings.experimental-features = [
     "nix-command"

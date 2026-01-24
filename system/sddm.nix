@@ -11,7 +11,7 @@ let
     [Desktop Entry]
     Name=Hyprland
     Comment=An intelligent dynamic tiling Wayland compositor
-    Exec=hyprland
+    Exec=start-hyprland
     Type=Application
     DesktopNames=Hyprland
     Keywords=tiling;wayland;compositor;
@@ -107,13 +107,13 @@ in
   ];
 
   # Create a basic Hyprland config for SDDM
-  environment.etc."sddm/hyprland.conf" = {
+      environment.etc."sddm/hyprland.conf" = {
     text = ''
       # Basic Hyprland configuration for SDDM
       monitor=,preferred,auto,1
 
       # Use integrated GPU for SDDM to save power
-      env = WLR_DRM_DEVICES,/dev/dri/card0
+      env = WLR_DRM_DEVICES=/dev/dri/card0
 
       # Basic appearance with Catppuccin Mocha colors
       general {

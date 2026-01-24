@@ -3,7 +3,7 @@
 { config, pkgs, lib, ... }:
 
 let
-  # Import all environment modules
+  # Import all environment modules (they export attribute sets directly)
   appsModule = import ./apps.nix;
   coreModule = import ./core.nix;
   waybarModule = import ./waybar.nix;

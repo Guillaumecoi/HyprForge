@@ -19,14 +19,15 @@
   "lazygit" # Terminal git UI
   "delta" # Better git diff
 
-  # Containers
+  # Containers & Virtualization
   "podman" # Rootless containers
   "podman-compose" # Docker Compose for Podman
   "podman-tui" # Terminal UI for Podman
+  "virtualbox" # VirtualBox virtualization
 
   # Development
   "direnv" # Environment switcher
-  "nixfmt-rfc-style" # Nix code formatter
+  "nixfmt" # Nix code formatter
   "nixpkgs-fmt" # Nixpkgs formatter
   "nixd" # Nix language server backend
   "taplo" # TOML formatter
@@ -81,7 +82,7 @@
 
   # Disk & Storage
   "yazi" # Terminal file explorer
-  "xfce.thunar" # Xfce file manager
+  "thunar" # Xfce file manager
   "ncdu" # Disk usage analyzer
   "gnome-disk-utility" # Disk manager
   "popsicle" # USB flasher
@@ -154,7 +155,7 @@
 
   # Document Viewers
   # "kdePackages.okular" # Universal viewer (PDF, ePub, etc.)
-  # "evince" # GNOME PDF viewer
+  "evince" # GNOME PDF viewer
   "zathura" # Minimal vim-style viewer
 
   # Email

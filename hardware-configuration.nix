@@ -27,12 +27,16 @@
   boot.initrd.luks.devices."cryptswap" = {
     device = "/dev/disk/by-uuid/af3285ab-762e-46b6-a624-a973b579700e";
     keyFile = "/crypto_keyfile.bin";
+    allowDiscards = true;
   };
 
   # Include the keyfile in initrd
   boot.initrd.secrets = {
     "/crypto_keyfile.bin" = "/crypto_keyfile.bin";
   };
+
+  # Resume from encrypted swap (optional, enables hibernation)
+  boot.resumeDevice = "/dev/mapper/cryptswap";
 
   fileSystems."/boot" =
     {
