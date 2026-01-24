@@ -45,8 +45,20 @@ in
     mkdir -p ${lib.concatStringsSep " " extraXdgDirs}
   '';
 
-  # Keep current zsh dotfiles location (legacy behavior) to silence warning
+  # Configure zsh to use XDG-compliant directory
+  # Using XDG config directory for dotfiles and XDG data for history
   programs.zsh = {
-    dotDir = config.home.homeDirectory;
+    dotDir = "${config.xdg.configHome}/zsh";
+    history = {
+      path = "${config.xdg.dataHome}/zsh/history";
+      size = 10000;
+      save = 10000;
+    };
   };
+
+  # Ensure zsh config directory exists
+  home.activation.createZshDir = lib.hm.dag.entryBefore ["writeBoundary"] ''
+    mkdir -p "$HOME/.config/zsh"
+    mkdir -p "$HOME/.local/share/zsh"
+  '';
 }

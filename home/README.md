@@ -29,7 +29,7 @@ Copy from example: `cp packages.nix.example packages.nix`
 **After creating/editing these files, you must add them to git:**
 
 ```bash
-git add -f home-config.nix home-packages.nix
+git add -f home-config.nix packages.nix
 ```
 
 This is required for Nix flakes to see them (they won't be committed due to .gitignore).

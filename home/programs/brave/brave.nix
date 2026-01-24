@@ -11,7 +11,6 @@ in
   # Brave Browser Configuration
   # Note: Brave uses Chromium's configuration structure
   programs.chromium = {
-    package = pkgs.brave;
 
     # Browser extensions (Chromium Web Store IDs)
     extensions = [
