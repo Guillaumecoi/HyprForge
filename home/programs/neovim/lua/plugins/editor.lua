@@ -1,10 +1,11 @@
 -- Editor enhancement plugins: treesitter, autopairs, comment, surround, indent-blankline, better-escape, neoscroll
 
 -- Treesitter (syntax highlighting)
-require('nvim-treesitter.configs').setup({
-  highlight = { enable = true },
-  indent = { enable = true },
-})
+-- Note: treesitter is configured via nvim-treesitter.withAllGrammars in neovim.nix
+-- Just enable the features here
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+vim.opt.foldenable = false -- Start with folds open
 
 -- Autopairs (auto close brackets)
 require('nvim-autopairs').setup()

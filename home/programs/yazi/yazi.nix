@@ -60,11 +60,19 @@ in
 
     [mgr]
     keymap = [
-      # Navigation - vim style
+      # Navigation - vim style (standard hjkl)
       { on = "h",       run = "leave",     desc = "Go to parent directory" },
       { on = "j",       run = "arrow 1",   desc = "Move down" },
       { on = "k",       run = "arrow -1",  desc = "Move up" },
       { on = "l",       run = "enter",     desc = "Enter directory" },
+
+      # Alternative navigation (Alt+hjkl)
+      { on = "<A-h>",   run = "leave",     desc = "Go to parent directory (Alt)" },
+      { on = "<A-j>",   run = "arrow 1",   desc = "Move down (Alt)" },
+      { on = "<A-k>",   run = "arrow -1",  desc = "Move up (Alt)" },
+      { on = "<A-l>",   run = "enter",     desc = "Enter directory (Alt)" },
+
+      # Arrow keys
       { on = "<Left>",  run = "leave",     desc = "Go to parent directory" },
       { on = "<Right>", run = "enter",     desc = "Enter directory" },
       { on = "<Up>",    run = "arrow -1",  desc = "Move up" },
@@ -84,10 +92,19 @@ in
       { on = "<Enter>", run = "open",                       desc = "Open file" },
       { on = "o",       run = "open",                       desc = "Open file" },
       { on = "O",       run = "open --interactive",         desc = "Open with..." },
+
+      # Copy/Cut/Paste (vim style)
       { on = "y",       run = "yank",                       desc = "Yank (copy)" },
       { on = "x",       run = "yank --cut",                 desc = "Cut" },
       { on = "p",       run = "paste",                      desc = "Paste" },
       { on = "P",       run = "paste --force",              desc = "Paste (overwrite)" },
+
+      # Alternative copy/cut/paste (standard shortcuts)
+      { on = "<C-c>",   run = "yank",                       desc = "Copy (Ctrl+C)" },
+      { on = "<C-x>",   run = "yank --cut",                 desc = "Cut (Ctrl+X)" },
+      { on = "<C-v>",   run = "paste",                      desc = "Paste (Ctrl+V)" },
+
+      # Delete/remove
       { on = "d",       run = "remove",                     desc = "Move to trash" },
       { on = "D",       run = "remove --permanently",       desc = "Delete permanently" },
       { on = "a",       run = "create",                     desc = "Create file/dir" },
@@ -99,16 +116,28 @@ in
       { on = "V",       run = "visual_mode --unset",   desc = "Exit visual mode" },
       { on = "<C-a>",   run = "toggle_all --state=on", desc = "Select all" },
 
-      # Search
+      # Search (standard vim + fuzzy)
       { on = "/", run = "search fd", desc = "Search files by name" },
       { on = "?", run = "search rg", desc = "Search file contents" },
       { on = "n", run = "search_next", desc = "Next search result" },
       { on = "N", run = "search_prev", desc = "Previous search result" },
+      { on = "<C-p>", run = "search fd", desc = "Fuzzy file search (Ctrl+P)" },
+      { on = "<C-S-f>", run = "search rg", desc = "Fuzzy content search (Ctrl+Shift+F)" },
 
-      # Tab management
+      # Tab management (vim-style + standard)
       { on = "t",       run = "tab_create",               desc = "New tab" },
       { on = "<Tab>",   run = "tab_switch 1 --relative",  desc = "Next tab" },
       { on = "<S-Tab>", run = "tab_switch -1 --relative", desc = "Previous tab" },
+
+      # Vim standard tab navigation
+      { on = [ "g", "t" ], run = "tab_switch 1 --relative", desc = "Next tab (gt)" },
+      { on = [ "g", "T" ], run = "tab_switch -1 --relative", desc = "Previous tab (gT)" },
+
+      # Alternative tab navigation (Shift+J/K)
+      { on = "<S-j>", run = "tab_switch 1 --relative", desc = "Next tab (Shift+J)" },
+      { on = "<S-k>", run = "tab_switch -1 --relative", desc = "Previous tab (Shift+K)" },
+
+      # Tab numbers (1-9)
       { on = "1",       run = "tab_switch 0", desc = "Go to tab 1" },
       { on = "2",       run = "tab_switch 1", desc = "Go to tab 2" },
       { on = "3",       run = "tab_switch 2", desc = "Go to tab 3" },

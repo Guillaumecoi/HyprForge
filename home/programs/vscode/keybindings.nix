@@ -22,7 +22,8 @@ in
 {
   # VSCode keybindings (applied to keybindings.json)
   keybindings = [
-    # Panel management (vim can't handle these)
+    # Panel management - Ctrl+H/J/K/L (toggle), Ctrl+Alt+H/J/K/L (focus)
+    # H=Left sidebar, J=Bottom terminal, K=Top/outline, L=Right auxiliary bar
     {
       key = keys.panels.left;
       command = "workbench.action.toggleSidebarVisibility";
@@ -30,6 +31,11 @@ in
     {
       key = keys.panels.bottom;
       command = "workbench.action.terminal.toggleTerminal";
+    }
+    {
+      key = keys.panels.top;
+      command = "breadcrumbs.toggle";
+      when = "!inDebugMode";
     }
     {
       key = keys.panels.right;
@@ -44,8 +50,46 @@ in
       command = "workbench.action.terminal.focus";
     }
     {
+      key = keys.panels.focusTop;
+      command = "outline.focus";
+    }
+    {
       key = keys.panels.focusRight;
       command = "workbench.action.focusAuxiliaryBar";
+    }
+
+    # Panel resizing (Ctrl+Shift+hjkl matching Hyprland pattern)
+    {
+      key = keys.panels.growLeft;
+      command = "workbench.action.decreaseViewWidth";
+    }
+    {
+      key = keys.panels.growDown;
+      command = "workbench.action.increaseViewHeight";
+    }
+    {
+      key = keys.panels.growUp;
+      command = "workbench.action.decreaseViewHeight";
+    }
+    {
+      key = keys.panels.growRight;
+      command = "workbench.action.increaseViewWidth";
+    }
+    {
+      key = keys.panels.shrinkLeft;
+      command = "workbench.action.increaseViewWidth";
+    }
+    {
+      key = keys.panels.shrinkDown;
+      command = "workbench.action.decreaseViewHeight";
+    }
+    {
+      key = keys.panels.shrinkUp;
+      command = "workbench.action.increaseViewHeight";
+    }
+    {
+      key = keys.panels.shrinkRight;
+      command = "workbench.action.decreaseViewWidth";
     }
 
     # Help and shortcuts
@@ -419,18 +463,79 @@ in
       }
     ];
 
+    # Vim standard keybindings (gt/gT for tabs, Alt+hjkl for window navigation)
+    "vim.normalModeKeyBindings" = [
+      # Tab/Buffer navigation (gt/gT like standard vim)
+      {
+        "before" = [ "g" "t" ];
+        "commands" = [ "workbench.action.nextEditor" ];
+      }
+      {
+        "before" = [ "g" "T" ];
+        "commands" = [ "workbench.action.previousEditor" ];
+      }
+      {
+        "before" = [ "g" "0" ];
+        "commands" = [ "workbench.action.openEditorAtIndex1" ];
+      }
+      {
+        "before" = [ "g" "$" ];
+        "commands" = [ "workbench.action.lastEditorInGroup" ];
+      }
+
+      # Alternative tab navigation (Shift+J/K)
+      {
+        "before" = [ "<S-j>" ];
+        "commands" = [ "workbench.action.nextEditor" ];
+      }
+      {
+        "before" = [ "<S-k>" ];
+        "commands" = [ "workbench.action.previousEditor" ];
+      }
+
+      # Alternative window navigation (Alt+hjkl)
+      {
+        "before" = [ "<A-h>" ];
+        "commands" = [ "workbench.action.navigateLeft" ];
+      }
+      {
+        "before" = [ "<A-j>" ];
+        "commands" = [ "workbench.action.navigateDown" ];
+      }
+      {
+        "before" = [ "<A-k>" ];
+        "commands" = [ "workbench.action.navigateUp" ];
+      }
+      {
+        "before" = [ "<A-l>" ];
+        "commands" = [ "workbench.action.navigateRight" ];
+      }
+    ];
+
     # Let vim handle most keys, but preserve system-level bindings
     "vim.handleKeys" = {
-      # Panel management
-      "<C-1>" = false;
-      "<C-2>" = false;
-      "<C-3>" = false;
-      "<C-4>" = false;
-      "<C-S-1>" = false;
-      "<C-S-2>" = false;
-      "<C-S-3>" = false;
-      "<C-S-4>" = false;
-      "<C-S-0>" = false;
+      # Panel management (toggle)
+      "<C-h>" = false;
+      "<C-j>" = false;
+      "<C-k>" = false;
+      "<C-l>" = false;
+
+      # Panel focus
+      "<C-A-h>" = false;
+      "<C-A-j>" = false;
+      "<C-A-k>" = false;
+      "<C-A-l>" = false;
+
+      # Panel resizing (Ctrl+Shift+hjkl)
+      "<C-S-h>" = false;
+      "<C-S-j>" = false;
+      "<C-S-k>" = false;
+      "<C-S-l>" = false;
+      "<C-A-S-h>" = false;
+      "<C-A-S-j>" = false;
+      "<C-A-S-k>" = false;
+      "<C-A-S-l>" = false;
+      "<C-S-;>" = false;
 
       # Zoom
       "<C-=>" = false;
@@ -474,7 +579,6 @@ in
       "<C-p>" = false;
       "<C-S-p>" = false;
       "<C-S-o>" = false;
-      "<C-l>" = false;
 
       # Editing
       "<C-s>" = false;

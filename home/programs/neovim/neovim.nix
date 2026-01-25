@@ -42,6 +42,7 @@ let
       view = ${toLuaTable keys.view},
       ai = ${toLuaTable keys.ai},
       help = ${toLuaTable keys.help},
+      vimApps = ${toLuaTable keys.vimApps},
     }
   '';
 in

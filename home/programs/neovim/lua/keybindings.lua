@@ -31,6 +31,27 @@ if keys.editing then
   map('n', keys.editing.save, ':w<CR>', { desc = 'Save file' })
   map('i', keys.editing.save, '<Esc>:w<CR>a', { desc = 'Save file (insert mode)' })
   map('n', keys.editing.saveAll, ':wa<CR>', { desc = 'Save all' })
+
+  -- Standard cut/copy/paste (alongside vim defaults)
+  if keys.editing.cut then
+    map('v', keys.editing.cut, '"+x', { desc = 'Cut to clipboard' })
+    map('n', keys.editing.cut, '"+dd', { desc = 'Cut line to clipboard' })
+  end
+  if keys.editing.copy then
+    map('v', keys.editing.copy, '"+y', { desc = 'Copy to clipboard' })
+    map('n', keys.editing.copy, '"+yy', { desc = 'Copy line to clipboard' })
+  end
+  if keys.editing.paste then
+    map('n', keys.editing.paste, '"+p', { desc = 'Paste from clipboard' })
+    map('v', keys.editing.paste, '"+p', { desc = 'Paste from clipboard' })
+    map('i', keys.editing.paste, '<C-r>+', { desc = 'Paste from clipboard' })
+  end
+  if keys.editing.undo then
+    map('n', keys.editing.undo, 'u', { desc = 'Undo' })
+  end
+  if keys.editing.redo then
+    map('n', keys.editing.redo, '<C-r>', { desc = 'Redo' })
+  end
 end
 
 -- ============================================
@@ -46,10 +67,16 @@ if keys.navigation then
   if keys.navigation.find then
     map('n', keys.navigation.find, '/', { desc = 'Find in file' })
   end
+  if keys.navigation.findInFiles then
+    map('n', keys.navigation.findInFiles, ':Telescope live_grep<CR>', { desc = 'Fuzzy search in files' })
+  end
   if keys.navigation.goToSymbol then
     map('n', keys.navigation.goToSymbol, ':Telescope lsp_document_symbols<CR>', { desc = 'Go to symbol' })
   end
 end
+-- Fuzzy search in current buffer (Ctrl+/)
+map('n', '<C-_>', ':Telescope current_buffer_fuzzy_find<CR>', { desc = 'Fuzzy search in buffer' })
+map('n', '<C-/>', ':Telescope current_buffer_fuzzy_find<CR>', { desc = 'Fuzzy search in buffer' })
 map('n', '<C-S-f>', ':Telescope live_grep<CR>', { desc = 'Find in files' })
 -- Go to line with : (standard vim)
 map('n', '<C-g>', ':', { desc = 'Go to line' })
@@ -102,16 +129,65 @@ map('n', '<A-Down>', '<C-w>j', { desc = 'Focus window down' })
 map('n', '<A-Up>', '<C-w>k', { desc = 'Focus window up' })
 map('n', '<A-Right>', '<C-w>l', { desc = 'Focus window right' })
 
--- Window resize (Ctrl+Alt+hjkl or Ctrl+Alt+Arrows)
-map('n', '<C-A-h>', ':vertical resize -2<CR>', { desc = 'Shrink window left' })
-map('n', '<C-A-l>', ':vertical resize +2<CR>', { desc = 'Expand window right' })
-map('n', '<C-A-k>', ':resize -2<CR>', { desc = 'Shrink window up' })
-map('n', '<C-A-j>', ':resize +2<CR>', { desc = 'Expand window down' })
+-- ============================================
+-- WINDOW RESIZE (Ctrl+Shift+hjkl matching panel grow/shrink)
+-- Inspired by Hyprland's Super+Shift+hjkl for window resizing
+-- ============================================
+if keys.vimApps then
+  -- Grow/resize window in direction (Ctrl+Shift+hjkl)
+  map('n', '<C-S-h>', ':vertical resize -5<CR>', { desc = 'Grow/resize window left' })
+  map('n', '<C-S-j>', ':resize +5<CR>', { desc = 'Grow/resize window down' })
+  map('n', '<C-S-k>', ':resize -5<CR>', { desc = 'Grow/resize window up' })
+  map('n', '<C-S-l>', ':vertical resize +5<CR>', { desc = 'Grow/resize window right' })
 
-map('n', '<C-A-Left>', ':vertical resize -2<CR>', { desc = 'Shrink window left' })
-map('n', '<C-A-Right>', ':vertical resize +2<CR>', { desc = 'Expand window right' })
-map('n', '<C-A-Up>', ':resize -2<CR>', { desc = 'Shrink window up' })
-map('n', '<C-A-Down>', ':resize +2<CR>', { desc = 'Expand window down' })
+  -- Shrink window (Ctrl+Alt+Shift+hjkl)
+  map('n', '<C-A-S-h>', ':vertical resize +5<CR>', { desc = 'Shrink window from left' })
+  map('n', '<C-A-S-j>', ':resize -5<CR>', { desc = 'Shrink window from bottom' })
+  map('n', '<C-A-S-k>', ':resize +5<CR>', { desc = 'Shrink window from top' })
+  map('n', '<C-A-S-l>', ':vertical resize -5<CR>', { desc = 'Shrink window from right' })
+else
+  -- Fallback window resize (Ctrl+Alt+hjkl)
+  map('n', '<C-A-h>', ':vertical resize -2<CR>', { desc = 'Shrink window left' })
+  map('n', '<C-A-l>', ':vertical resize +2<CR>', { desc = 'Expand window right' })
+  map('n', '<C-A-k>', ':resize -2<CR>', { desc = 'Shrink window up' })
+  map('n', '<C-A-j>', ':resize +2<CR>', { desc = 'Expand window down' })
+
+  map('n', '<C-A-Left>', ':vertical resize -2<CR>', { desc = 'Shrink window left' })
+  map('n', '<C-A-Right>', ':vertical resize +2<CR>', { desc = 'Expand window right' })
+  map('n', '<C-A-Up>', ':resize -2<CR>', { desc = 'Shrink window up' })
+  map('n', '<C-A-Down>', ':resize +2<CR>', { desc = 'Expand window down' })
+end
+
+-- ============================================
+-- VIM-SPECIFIC KEYBINDINGS (from vimApps section)
+-- ============================================
+if keys.vimApps then
+  -- Tab management (Neovim buffers = tabs)
+  -- Standard vim: gt/gT for tab navigation
+  map('n', 'gt', ':BufferLineCycleNext<CR>', { desc = 'Next buffer/tab' })
+  map('n', 'gT', ':BufferLineCyclePrev<CR>', { desc = 'Previous buffer/tab' })
+  map('n', 'g0', ':BufferLineGoToBuffer 1<CR>', { desc = 'First buffer/tab' })
+  map('n', 'g$', ':BufferLineGoToBuffer -1<CR>', { desc = 'Last buffer/tab' })
+
+  -- Alternative tab navigation with Shift+J/K
+  map('n', '<S-j>', ':BufferLineCycleNext<CR>', { desc = 'Next buffer/tab (Shift+J)' })
+  map('n', '<S-k>', ':BufferLineCyclePrev<CR>', { desc = 'Previous buffer/tab (Shift+K)' })
+
+  -- Close tab with 'x' (in addition to Ctrl+W)
+  map('n', 'x', ':bdelete<CR>', { desc = 'Close buffer/tab' })
+
+  -- New tab with 't' (like Yazi/Vimium)
+  map('n', 't', ':tabnew<CR>', { desc = 'New tab' })
+
+  -- Split management from vimApps
+  if keys.vimApps.splitVertical then
+    -- Note: In neovim, Ctrl+\ doesn't work well, using Ctrl+Backslash
+    map('n', '<C-\\>', ':vsplit<CR>', { desc = 'Split vertical' })
+  end
+  if keys.vimApps.splitHorizontal then
+    map('n', '<C-S-\\>', ':split<CR>', { desc = 'Split horizontal' })
+  end
+end
 
 -- ============================================
 -- LINE OPERATIONS (Alt+Shift+Up/Down)
