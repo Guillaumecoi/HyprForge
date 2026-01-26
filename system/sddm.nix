@@ -6,12 +6,22 @@
 }:
 
 let
-  # Custom Hyprland session that uses home-manager's start-hyprland wrapper
+  # Wrapper script that uses start-hyprland if available, otherwise Hyprland
+  hyprland-wrapper = pkgs.writeShellScript "hyprland-wrapper" ''
+    # Check if start-hyprland exists in PATH (means Home Manager is set up)
+    if command -v start-hyprland &> /dev/null; then
+      exec start-hyprland
+    else
+      exec Hyprland
+    fi
+  '';
+
+  # Custom Hyprland session that uses the wrapper
   hyprland-session = pkgs.writeTextDir "share/wayland-sessions/hyprland.desktop" ''
     [Desktop Entry]
     Name=Hyprland
     Comment=An intelligent dynamic tiling Wayland compositor
-    Exec=start-hyprland
+    Exec=${hyprland-wrapper}
     Type=Application
     DesktopNames=Hyprland
     Keywords=tiling;wayland;compositor;
@@ -42,6 +52,13 @@ in
         InputMethod = ""; # Can be set to "qtvirtualkeyboard" if needed
       };
 
+      # Input configuration for mouse/touchpad
+      Input = {
+        EnableMouse = true;
+        EnableTouchpad = true;
+        EnableTapToClick = true;
+      };
+
       # Theme settings
       Theme = {
         Current = "catppuccin-mocha-mauve";
@@ -57,7 +74,7 @@ in
 
       # Wayland specific settings
       Wayland = {
-        CompositorCommand = "${pkgs.kdePackages.kwin}/bin/kwin_wayland --no-lockscreen --inputmethod maliit-keyboard";
+        CompositorCommand = "${pkgs.kdePackages.kwin}/bin/kwin_wayland --no-lockscreen";
         EnableHiDPI = true;
         SessionDir = "${hyprland-session}/share/wayland-sessions";
       };
@@ -114,6 +131,14 @@ in
 
       # Use integrated GPU for SDDM to save power
       env = WLR_DRM_DEVICES=/dev/dri/card0
+
+      # Enable mouse/touchpad input
+      input {
+        follow_mouse = 1
+        touchpad {
+          natural_scroll = true
+        }
+      }
 
       # Basic appearance with Catppuccin Mocha colors
       general {
