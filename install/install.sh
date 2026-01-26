@@ -379,7 +379,7 @@ partition_disk() {
         print_warning "Choose a strong passphrase - you'll need it every time you boot!"
         echo ""
 
-        # First encrypt root partition (this will ask for passphrase)
+        # Encrypt root partition (this will ask for passphrase once)
         if [[ $SWAP_SIZE_GB -gt 0 ]]; then
             print_info "Encrypting root partition..."
             cryptsetup luksFormat --type luks2 "${part_prefix}3"
@@ -388,20 +388,15 @@ partition_disk() {
             print_info "Formatting encrypted root..."
             mkfs.ext4 -F /dev/mapper/cryptroot
 
-            # Create a keyfile for automatic swap unlock
-            print_info "Creating keyfile for swap encryption..."
-            dd bs=512 count=4 if=/dev/random of=/tmp/crypto_keyfile.bin iflag=fullblock 2>/dev/null
-            chmod 000 /tmp/crypto_keyfile.bin
+            # Create keyfile for swap encryption (will be set up post-install)
+            print_info "Swap will be available unencrypted for installation..."
+            print_info "You can encrypt it after first boot using the provided script"
 
-            # Encrypt swap with keyfile (no passphrase prompt)
-            print_info "Encrypting swap partition with keyfile..."
-            cryptsetup luksFormat --type luks2 "${part_prefix}2" /tmp/crypto_keyfile.bin
-            print_info "Opening encrypted swap..."
-            cryptsetup open "${part_prefix}2" cryptswap --key-file=/tmp/crypto_keyfile.bin
-            print_info "Formatting encrypted swap..."
-            mkswap /dev/mapper/cryptswap
+            # For now, just format swap normally - it will be encrypted on first boot
+            print_info "Formatting swap partition..."
+            mkswap "${part_prefix}2"
             print_info "Enabling swap..."
-            swapon /dev/mapper/cryptswap
+            swapon "${part_prefix}2"
         else
             print_info "Encrypting root partition..."
             cryptsetup luksFormat --type luks2 "${part_prefix}2"
@@ -433,15 +428,13 @@ partition_disk() {
     # Store partition paths for later
     EFI_PART="${part_prefix}1"
     if [[ "${ENCRYPT_OS}" == "true" ]]; then
-        # Use encrypted mapper devices
+        # Use encrypted mapper device for root
+        ROOT_PART="/dev/mapper/cryptroot"
         if [[ $SWAP_SIZE_GB -gt 0 ]]; then
-            SWAP_PART="/dev/mapper/cryptswap"
-            ROOT_PART="/dev/mapper/cryptroot"
-            CRYPT_SWAP_DEVICE="${part_prefix}2"
+            SWAP_PART="${part_prefix}2"
             CRYPT_ROOT_DEVICE="${part_prefix}3"
         else
             SWAP_PART=""
-            ROOT_PART="/dev/mapper/cryptroot"
             CRYPT_ROOT_DEVICE="${part_prefix}2"
         fi
     else
@@ -489,74 +482,94 @@ setup_dotfiles() {
         swap_uuid=$(blkid -s UUID -o value "${SWAP_PART}")
     fi
 
-    # If encryption is enabled, check if LUKS is already configured
+    # If encryption is enabled, configure LUKS
     if [[ "${ENCRYPT_OS}" == "true" ]]; then
-        print_info "Checking LUKS encryption configuration..."
+        print_info "Configuring LUKS encryption..."
+
+        # Get UUID of encrypted root device
+        local root_uuid
+        root_uuid=$(blkid -s UUID -o value "${CRYPT_ROOT_DEVICE}")
 
         # Check if nixos-generate-config already added LUKS configuration
-        if grep -q "boot.initrd.luks.devices" /mnt/etc/nixos/hardware-configuration.nix; then
-            print_info "LUKS configuration already present (auto-detected by nixos-generate-config)"
-        else
-            print_info "Adding LUKS encryption configuration..."
+        if ! grep -q "boot.initrd.luks.devices" /mnt/etc/nixos/hardware-configuration.nix; then
+            print_info "Adding LUKS configuration to hardware-configuration.nix..."
 
-            # Get UUIDs of encrypted devices
-            local root_uuid
-            root_uuid=$(blkid -s UUID -o value "${CRYPT_ROOT_DEVICE}")
-
-            # Insert LUKS configuration before the closing brace
             # Remove the last closing brace temporarily
             sed -i '$ d' /mnt/etc/nixos/hardware-configuration.nix
 
-            # Add LUKS configuration
+            # Add LUKS configuration for root
             cat >> /mnt/etc/nixos/hardware-configuration.nix << EOF
 
   # LUKS Encryption Configuration
-  boot.initrd.luks.devices = {
-    cryptroot = {
-      device = "/dev/disk/by-uuid/${root_uuid}";
-      preLVM = true;
-    };
-EOF
-
-            if [[ $SWAP_SIZE_GB -gt 0 ]]; then
-                local swap_uuid_crypt
-                swap_uuid_crypt=$(blkid -s UUID -o value "${CRYPT_SWAP_DEVICE}")
-                cat >> /mnt/etc/nixos/hardware-configuration.nix << EOF
-    cryptswap = {
-      device = "/dev/disk/by-uuid/${swap_uuid_crypt}";
-      keyFile = "/crypto_keyfile.bin";
-    };
-EOF
-            fi
-
-            # Close the LUKS devices block
-            cat >> /mnt/etc/nixos/hardware-configuration.nix << EOF
+  boot.initrd.luks.devices.cryptroot = {
+    device = "/dev/disk/by-uuid/${root_uuid}";
+    preLVM = true;
   };
+}
 EOF
+        fi
 
-            # Add keyfile to initrd if swap is encrypted
-            if [[ $SWAP_SIZE_GB -gt 0 ]]; then
-                cat >> /mnt/etc/nixos/hardware-configuration.nix << EOF
+        # If swap exists, create a post-install script to encrypt it with a keyfile
+        if [[ $SWAP_SIZE_GB -gt 0 ]]; then
+            print_info "Creating swap encryption setup script..."
+            local swap_part_uuid
+            swap_part_uuid=$(blkid -s UUID -o value "${SWAP_PART}")
+
+            cat > "/mnt/root/setup-encrypted-swap.sh" << 'SWAPEOF'
+#!/usr/bin/env bash
+set -e
+
+echo "Setting up encrypted swap with keyfile..."
+
+# Create keyfile
+dd bs=512 count=4 if=/dev/random of=/root/swap.key iflag=fullblock
+chmod 000 /root/swap.key
+
+# Get swap partition UUID
+SWAP_UUID="SWAP_UUID_PLACEHOLDER"
+
+# Encrypt swap partition with keyfile
+echo "Encrypting swap partition..."
+cryptsetup luksFormat --type luks2 /dev/disk/by-uuid/${SWAP_UUID} /root/swap.key
+
+# Add keyfile configuration to hardware-configuration.nix
+echo "Updating hardware configuration..."
+# Remove closing brace
+sed -i '$ d' /etc/nixos/hardware-configuration.nix
+
+# Add encrypted swap configuration
+cat >> /etc/nixos/hardware-configuration.nix << 'EOF'
+
+  # Encrypted Swap Configuration
+  boot.initrd.luks.devices.cryptswap = {
+    device = "/dev/disk/by-uuid/SWAP_UUID_PLACEHOLDER";
+    keyFile = "/root/swap.key";
+    allowDiscards = true;
+  };
 
   # Include the keyfile in initrd
   boot.initrd.secrets = {
-    "/crypto_keyfile.bin" = "/crypto_keyfile.bin";
+    "/root/swap.key" = "/root/swap.key";
   };
-EOF
-            fi
 
-            # Close the main config
-            cat >> /mnt/etc/nixos/hardware-configuration.nix << EOF
+  # Update swap device
+  swapDevices = [{ device = "/dev/mapper/cryptswap"; }];
 }
 EOF
 
-            # Copy keyfile to the mounted root if swap is encrypted
-            if [[ $SWAP_SIZE_GB -gt 0 ]]; then
-                print_info "Installing keyfile to system..."
-                cp /tmp/crypto_keyfile.bin /mnt/crypto_keyfile.bin
-                chmod 000 /mnt/crypto_keyfile.bin
-                rm /tmp/crypto_keyfile.bin
-            fi
+echo "Rebuilding NixOS configuration..."
+nixos-rebuild boot
+
+echo "Encrypted swap setup complete!"
+echo "Please reboot for changes to take effect."
+SWAPEOF
+
+            # Replace placeholder with actual UUID
+            sed -i "s/SWAP_UUID_PLACEHOLDER/${swap_part_uuid}/g" "/mnt/root/setup-encrypted-swap.sh"
+            chmod +x "/mnt/root/setup-encrypted-swap.sh"
+
+            print_info "Swap encryption will be set up on first boot"
+            print_info "Run: sudo /root/setup-encrypted-swap.sh after logging in"
         fi
     fi
 
