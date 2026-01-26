@@ -509,90 +509,23 @@ setup_dotfiles() {
 EOF
         fi
 
-        # If swap exists, create a post-install script to encrypt it with a keyfile
+        # If swap exists, copy the swap encryption script for later use
         if [[ $SWAP_SIZE_GB -gt 0 ]]; then
-            print_info "Creating swap encryption setup script..."
+            print_info "Installing swap encryption script..."
 
             # Create /root directory if it doesn't exist
             mkdir -p "/mnt/root"
 
-            cat > "/mnt/root/setup-encrypted-swap.sh" << SWAPEOF
-#!/usr/bin/env bash
-set -e
-
-echo "Setting up encrypted swap with keyfile..."
-
-# Disable swap
-echo "Disabling swap..."
-swapoff -a
-
-# Create keyfile
-echo "Creating keyfile..."
-dd bs=512 count=4 if=/dev/random of=/root/swap.key iflag=fullblock
-chmod 000 /root/swap.key
-
-# Encrypt swap partition with keyfile
-echo "Encrypting swap partition ${SWAP_PART}..."
-cryptsetup luksFormat --type luks2 ${SWAP_PART} /root/swap.key
-
-# Get the NEW UUID after encryption
-ENCRYPTED_UUID=\$(blkid -s UUID -o value ${SWAP_PART})
-
-# Open encrypted swap
-echo "Opening encrypted swap..."
-cryptsetup open ${SWAP_PART} cryptswap --key-file /root/swap.key
-
-# Format as swap
-echo "Formatting encrypted swap..."
-mkswap /dev/mapper/cryptswap
-
-# Enable it
-echo "Enabling encrypted swap..."
-swapon /dev/mapper/cryptswap
-
-# Update hardware-configuration.nix
-echo "Updating hardware configuration..."
-# Backup first
-cp /etc/nixos/hardware-configuration.nix /etc/nixos/hardware-configuration.nix.backup
-
-# Remove the old swapDevices line and closing brace
-sed -i '/swapDevices/d' /etc/nixos/hardware-configuration.nix
-sed -i '\$ d' /etc/nixos/hardware-configuration.nix
-
-# Add encrypted swap configuration
-cat >> /etc/nixos/hardware-configuration.nix << EOF
-
-  # Encrypted Swap Configuration
-  boot.initrd.luks.devices.cryptswap = {
-    device = "/dev/disk/by-uuid/\${ENCRYPTED_UUID}";
-    keyFile = "/root/swap.key";
-    allowDiscards = true;
-  };
-
-  # Include the keyfile in initrd
-  boot.initrd.secrets = {
-    "/root/swap.key" = "/root/swap.key";
-  };
-
-  # Encrypted swap device
-  swapDevices = [{ device = "/dev/mapper/cryptswap"; }];
-}
-EOF
-
-echo "Rebuilding NixOS configuration..."
-nixos-rebuild boot
-
-echo ""
-echo "Encrypted swap setup complete!"
-echo "A backup of your old configuration is at /etc/nixos/hardware-configuration.nix.backup"
-echo ""
-echo "Please reboot for changes to take effect: sudo reboot"
-SWAPEOF
-
-            chmod +x "/mnt/root/setup-encrypted-swap.sh"
-
-            print_info "Swap encryption script created at /root/setup-encrypted-swap.sh"
-            print_info "Run it after first boot with: sudo /root/setup-encrypted-swap.sh"
+            # Copy the script from the repo to /mnt/root/
+            if [[ -f "/mnt/etc/nixos/install/setup-encrypted-swap.sh" ]]; then
+                cp "/mnt/etc/nixos/install/setup-encrypted-swap.sh" "/mnt/root/"
+                chmod +x "/mnt/root/setup-encrypted-swap.sh"
+                print_success "Swap encryption script installed at /root/setup-encrypted-swap.sh"
+                print_info "After first boot, run: sudo /root/setup-encrypted-swap.sh ${SWAP_PART}"
+            else
+                print_warning "Swap encryption script not found in repository"
+                print_info "You can manually encrypt swap later if needed"
+            fi
         fi
     fi
 
@@ -613,12 +546,6 @@ SWAPEOF
 
   # Printer configuration (empty list = no printing)
   printerDrivers = [];
-
-  # Git configuration (to be configured later)
-  git = {
-    fullName = "";
-    email = "";
-  };
 }
 EOF
 
