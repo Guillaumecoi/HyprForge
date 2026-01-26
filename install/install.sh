@@ -512,37 +512,56 @@ EOF
         # If swap exists, create a post-install script to encrypt it with a keyfile
         if [[ $SWAP_SIZE_GB -gt 0 ]]; then
             print_info "Creating swap encryption setup script..."
-            local swap_part_uuid
-            swap_part_uuid=$(blkid -s UUID -o value "${SWAP_PART}")
 
-            cat > "/mnt/root/setup-encrypted-swap.sh" << 'SWAPEOF'
+            cat > "/mnt/root/setup-encrypted-swap.sh" << SWAPEOF
 #!/usr/bin/env bash
 set -e
 
 echo "Setting up encrypted swap with keyfile..."
 
+# Disable swap
+echo "Disabling swap..."
+swapoff -a
+
 # Create keyfile
+echo "Creating keyfile..."
 dd bs=512 count=4 if=/dev/random of=/root/swap.key iflag=fullblock
 chmod 000 /root/swap.key
 
-# Get swap partition UUID
-SWAP_UUID="SWAP_UUID_PLACEHOLDER"
-
 # Encrypt swap partition with keyfile
-echo "Encrypting swap partition..."
-cryptsetup luksFormat --type luks2 /dev/disk/by-uuid/${SWAP_UUID} /root/swap.key
+echo "Encrypting swap partition ${SWAP_PART}..."
+cryptsetup luksFormat --type luks2 ${SWAP_PART} /root/swap.key
 
-# Add keyfile configuration to hardware-configuration.nix
+# Get the NEW UUID after encryption
+ENCRYPTED_UUID=\$(blkid -s UUID -o value ${SWAP_PART})
+
+# Open encrypted swap
+echo "Opening encrypted swap..."
+cryptsetup open ${SWAP_PART} cryptswap --key-file /root/swap.key
+
+# Format as swap
+echo "Formatting encrypted swap..."
+mkswap /dev/mapper/cryptswap
+
+# Enable it
+echo "Enabling encrypted swap..."
+swapon /dev/mapper/cryptswap
+
+# Update hardware-configuration.nix
 echo "Updating hardware configuration..."
-# Remove closing brace
-sed -i '$ d' /etc/nixos/hardware-configuration.nix
+# Backup first
+cp /etc/nixos/hardware-configuration.nix /etc/nixos/hardware-configuration.nix.backup
+
+# Remove the old swapDevices line and closing brace
+sed -i '/swapDevices/d' /etc/nixos/hardware-configuration.nix
+sed -i '\$ d' /etc/nixos/hardware-configuration.nix
 
 # Add encrypted swap configuration
-cat >> /etc/nixos/hardware-configuration.nix << 'EOF'
+cat >> /etc/nixos/hardware-configuration.nix << EOF
 
   # Encrypted Swap Configuration
   boot.initrd.luks.devices.cryptswap = {
-    device = "/dev/disk/by-uuid/SWAP_UUID_PLACEHOLDER";
+    device = "/dev/disk/by-uuid/\${ENCRYPTED_UUID}";
     keyFile = "/root/swap.key";
     allowDiscards = true;
   };
@@ -552,7 +571,7 @@ cat >> /etc/nixos/hardware-configuration.nix << 'EOF'
     "/root/swap.key" = "/root/swap.key";
   };
 
-  # Update swap device
+  # Encrypted swap device
   swapDevices = [{ device = "/dev/mapper/cryptswap"; }];
 }
 EOF
@@ -560,16 +579,17 @@ EOF
 echo "Rebuilding NixOS configuration..."
 nixos-rebuild boot
 
+echo ""
 echo "Encrypted swap setup complete!"
-echo "Please reboot for changes to take effect."
+echo "A backup of your old configuration is at /etc/nixos/hardware-configuration.nix.backup"
+echo ""
+echo "Please reboot for changes to take effect: sudo reboot"
 SWAPEOF
 
-            # Replace placeholder with actual UUID
-            sed -i "s/SWAP_UUID_PLACEHOLDER/${swap_part_uuid}/g" "/mnt/root/setup-encrypted-swap.sh"
             chmod +x "/mnt/root/setup-encrypted-swap.sh"
 
-            print_info "Swap encryption will be set up on first boot"
-            print_info "Run: sudo /root/setup-encrypted-swap.sh after logging in"
+            print_info "Swap encryption script created at /root/setup-encrypted-swap.sh"
+            print_info "Run it after first boot with: sudo /root/setup-encrypted-swap.sh"
         fi
     fi
 
@@ -639,101 +659,16 @@ setup_home_manager() {
 
     print_success "HyprForge copied to /home/${USERNAME}/HyprForge"
 
-    # Create a post-install setup script for the user
-    print_info "Creating post-install setup script..."
-
-    cat > "/mnt/home/${USERNAME}/.setup-home-manager.sh" << 'SETUPEOF'
-#!/usr/bin/env bash
-
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-CYAN='\033[0;36m'
-NC='\033[0m'
-BOLD='\033[1m'
-
-echo -e "${CYAN}"
-echo -e "╔════════════════════════════════════════════════════════════════╗"
-echo -e "║                                                                ║"
-echo -e "║     ${BOLD}HyprForge Home Manager Setup${NC}${CYAN}                           ║"
-echo -e "║                                                                ║"
-echo -e "╚════════════════════════════════════════════════════════════════╝"
-echo -e "${NC}\n"
-
-echo -e "${BLUE}[1/3]${NC} ${BOLD}Initializing Home Manager...${NC}"
-echo -e "${CYAN}  → ${NC}This will set up your user environment and applications"
-echo ""
-
-# Check if HyprForge directory exists
-if [[ ! -d "$HOME/HyprForge" ]]; then
-    echo -e "${RED}  ✗ ${NC}HyprForge directory not found in $HOME"
-    echo -e "${YELLOW}  ⚠ ${NC}Please ensure /home/$(whoami)/HyprForge exists"
-    exit 1
-fi
-
-cd "$HOME/HyprForge" || exit 1
-
-echo -e "${BLUE}[2/3]${NC} ${BOLD}Running Home Manager switch...${NC}"
-echo -e "${CYAN}  → ${NC}This may take 5-10 minutes on first run"
-echo ""
-
-# Run home-manager switch with the flake
-if home-manager switch --flake "$HOME/HyprForge#$(whoami)@$(hostname)"; then
-    echo -e "${GREEN}  ✓ ${NC}Home Manager setup complete!"
-else
-    echo -e "${RED}  ✗ ${NC}Home Manager setup failed"
-    echo -e "${YELLOW}  ⚠ ${NC}You may need to run this manually:"
-    echo -e "      cd ~/HyprForge && home-manager switch --flake .#$(whoami)@$(hostname)"
-    exit 1
-fi
-
-echo ""
-echo -e "${BLUE}[3/3]${NC} ${BOLD}Finalizing setup...${NC}"
-
-# Remove this setup script
-rm -f "$HOME/.setup-home-manager.sh"
-
-echo ""
-echo -e "${GREEN}"
-echo -e "╔════════════════════════════════════════════════════════════════╗"
-echo -e "║                                                                ║"
-echo -e "║     ${BOLD}Setup Complete!${NC}${GREEN}                                        ║"
-echo -e "║                                                                ║"
-echo -e "╚════════════════════════════════════════════════════════════════╝"
-echo -e "${NC}\n"
-
-echo -e "${CYAN}  → ${NC}All user applications and settings are now active!"
-echo -e "${CYAN}  → ${NC}Press ${BOLD}SUPER + T${NC} for terminal (kitty)"
-echo -e "${CYAN}  → ${NC}Press ${BOLD}SUPER + Q${NC} for another terminal"
-echo -e "${CYAN}  → ${NC}Press ${BOLD}SUPER + A${NC} for application launcher"
-echo -e "${CYAN}  → ${NC}Press ${BOLD}SUPER + SLASH${NC} to see all keybindings"
-echo ""
-echo -e "${YELLOW}  ⚠ ${NC}You may need to ${BOLD}logout and login${NC} or ${BOLD}reboot${NC} for all changes to take effect"
-echo ""
-
-read -p "Press Enter to continue..."
-
-SETUPEOF
-
-    chmod +x "/mnt/home/${USERNAME}/.setup-home-manager.sh"
-    nixos-enter --root /mnt -c "chown ${USERNAME}:users /home/${USERNAME}/.setup-home-manager.sh"
-
-    print_success "Post-install script created"
-
     # Try to run home-manager setup now (this might fail if home-manager isn't available in the live environment)
     print_info "Attempting to initialize Home Manager now..."
     echo ""
 
     if nixos-enter --root /mnt -c "su - ${USERNAME} -c 'cd ~/HyprForge && home-manager switch --flake .#${USERNAME}@${HOSTNAME}'" 2>/dev/null; then
         print_success "Home Manager initialized successfully!"
-        # Remove the setup script since we don't need it anymore
-        rm -f "/mnt/home/${USERNAME}/.setup-home-manager.sh"
     else
         print_warning "Could not initialize Home Manager during installation"
-        print_info "A setup script has been created at ~/.setup-home-manager.sh"
-        print_info "It will run automatically on first login, or you can run it manually"
+        print_info "Run the post-install script after first boot:"
+        print_info "  cd ~/HyprForge/install && bash post-install.sh"
     fi
 }
 
@@ -753,17 +688,14 @@ print_complete() {
     print_info "Next steps:"
     echo -e "  1. Reboot: ${BOLD}reboot${NC}"
     echo -e "  2. Login with username: ${BOLD}${USERNAME}${NC}"
+    echo -e "  3. If needed, setup Home Manager: ${BOLD}cd ~/HyprForge/install && bash post-install.sh${NC}"
 
-    # Check if the setup script still exists
-    if [[ -f "/mnt/home/${USERNAME}/.setup-home-manager.sh" ]]; then
-        echo -e "  3. Run the setup script: ${BOLD}~/.setup-home-manager.sh${NC}"
-        echo -e "     ${YELLOW}(This will complete Home Manager setup)${NC}"
-        echo -e "  4. Press ${BOLD}SUPER + T${NC} for terminal"
-        echo -e "  5. Press ${BOLD}SUPER + A${NC} for application launcher"
+    if [[ "${ENCRYPT_OS}" == "true" ]] && [[ $SWAP_SIZE_GB -gt 0 ]]; then
+        echo -e "  4. (Optional) Encrypt swap: ${BOLD}sudo /root/setup-encrypted-swap.sh${NC}"
+        echo -e "  5. Press ${BOLD}SUPER + T${NC} for terminal"
         echo -e "  6. Press ${BOLD}SUPER + SLASH${NC} to see all keybindings"
     else
-        echo -e "  3. Press ${BOLD}SUPER + T${NC} for terminal"
-        echo -e "  4. Press ${BOLD}SUPER + A${NC} for application launcher"
+        echo -e "  4. Press ${BOLD}SUPER + T${NC} for terminal"
         echo -e "  5. Press ${BOLD}SUPER + SLASH${NC} to see all keybindings"
     fi
 
