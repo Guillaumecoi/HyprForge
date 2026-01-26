@@ -395,9 +395,9 @@ partition_disk() {
 
             # Encrypt swap with keyfile (no passphrase prompt)
             print_info "Encrypting swap partition with keyfile..."
-            cryptsetup luksFormat --type luks2 --key-file /tmp/crypto_keyfile.bin --batch-mode "${part_prefix}2"
+            cryptsetup luksFormat --type luks2 --batch-mode --key-file=/tmp/crypto_keyfile.bin "${part_prefix}2"
             print_info "Opening encrypted swap..."
-            cryptsetup open "${part_prefix}2" cryptswap --key-file /tmp/crypto_keyfile.bin
+            cryptsetup open "${part_prefix}2" cryptswap --key-file=/tmp/crypto_keyfile.bin
             print_info "Formatting encrypted swap..."
             mkswap /dev/mapper/cryptswap
             print_info "Enabling swap..."
