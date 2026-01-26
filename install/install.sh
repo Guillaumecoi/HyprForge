@@ -513,6 +513,9 @@ EOF
         if [[ $SWAP_SIZE_GB -gt 0 ]]; then
             print_info "Creating swap encryption setup script..."
 
+            # Create /root directory if it doesn't exist
+            mkdir -p "/mnt/root"
+
             cat > "/mnt/root/setup-encrypted-swap.sh" << SWAPEOF
 #!/usr/bin/env bash
 set -e
