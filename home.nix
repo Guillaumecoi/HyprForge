@@ -111,13 +111,6 @@ in
   home.file.".local/share/emoji/emoji.db".source = ./share/emoji/emoji.db;
   home.file.".local/share/emoji/glyph.db".source = ./share/emoji/glyph.db;
 
-  # Link individual files inside the folders to Nix, ensuring they are managed by Nix
-  home.file."Templates/dev-templates" = {
-    source = ./share/dev-templates;
-    recursive = true;
-  };
-  home.file."Pictures/Wallpapers" = {
-    source = ./share/wallpapers;
-    recursive = true;
-  };
+  home.file."Pictures/Wallpapers/nix".source = ./share/wallpapers;
+  home.file."Templates/dev-templates/nix".source = ./share/dev-templates;
 }

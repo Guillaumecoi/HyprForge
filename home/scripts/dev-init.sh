@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-TEMPLATE_DIR="$HOME/Templates/dev-templates"
+TEMPLATE_DIRS=("$HOME/Templates/dev-templates/local" "$HOME/Templates/dev-templates/nix")
 
 # Show usage if no arguments
 if [ $# -eq 0 ]; then
@@ -10,15 +10,24 @@ if [ $# -eq 0 ]; then
   echo "Usage: dev-init <template>"
   echo
   echo "Available templates:"
-  if [ -d "$TEMPLATE_DIR" ]; then
-    for template in "$TEMPLATE_DIR"/*; do
-      if [ -d "$template" ]; then
-        template_name=$(basename "$template")
-        echo "  📦 $template_name"
-      fi
-    done
-  else
-    echo "  ❌ Template directory not found: $TEMPLATE_DIR"
+  declare -A _seen
+  found=0
+  for d in "${TEMPLATE_DIRS[@]}"; do
+    if [ -d "$d" ]; then
+      for template in "$d"/*; do
+        if [ -d "$template" ]; then
+          template_name=$(basename "$template")
+          if [ -z "${_seen[$template_name]+x}" ]; then
+            echo "  📦 $template_name"
+            _seen[$template_name]=1
+            found=1
+          fi
+        fi
+      done
+    fi
+  done
+  if [ $found -eq 0 ]; then
+    echo "  ❌ No template directories found in: ${TEMPLATE_DIRS[*]}"
   fi
   echo
   echo "Examples:"
@@ -29,16 +38,29 @@ if [ $# -eq 0 ]; then
 fi
 
 TEMPLATE="$1"
-TEMPLATE_PATH="$TEMPLATE_DIR/$TEMPLATE"
+TEMPLATE_PATH=""
+for d in "${TEMPLATE_DIRS[@]}"; do
+  if [ -d "$d/$TEMPLATE" ]; then
+    TEMPLATE_PATH="$d/$TEMPLATE"
+    break
+  fi
+done
 
-# Check if template exists
-if [ ! -d "$TEMPLATE_PATH" ]; then
+if [ -z "$TEMPLATE_PATH" ]; then
   echo "❌ Template '$TEMPLATE' not found"
   echo "Available templates:"
-  for template in "$TEMPLATE_DIR"/*; do
-    if [ -d "$template" ]; then
-      template_name=$(basename "$template")
-      echo "  📦 $template_name"
+  declare -A _seen2
+  for d in "${TEMPLATE_DIRS[@]}"; do
+    if [ -d "$d" ]; then
+      for template in "$d"/*; do
+        if [ -d "$template" ]; then
+          template_name=$(basename "$template")
+          if [ -z "${_seen2[$template_name]+x}" ]; then
+            echo "  📦 $template_name"
+            _seen2[$template_name]=1
+          fi
+        fi
+      done
     fi
   done
   exit 1

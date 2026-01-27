@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Use a single wallpaper directory
-WALLPAPER_DIRS=("${HOME}/Pictures/Wallpapers/")
+# Look in per-user `local` first, then nix-provided `nix`, then fallback to Pictures/Wallpapers
+WALLPAPER_DIRS=(
+  "${HOME}/Pictures/Wallpapers/local"
+  "${HOME}/Pictures/Wallpapers/nix"
+)
 
 # Collect wallpapers from existing dirs
 WALLPAPERS=()

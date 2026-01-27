@@ -11,7 +11,10 @@
     flake-utils.lib.eachDefaultSystem (
       system:
       let
-        pkgs = nixpkgs.legacyPackages.${system};
+        pkgs = import nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
+        };
       in
       {
         devShells.default = pkgs.mkShell {
@@ -74,28 +77,8 @@
           shellHook = ''
             echo "🍷 Autodesk Fusion 360 for Linux environment loaded"
             echo ""
-            echo "This environment provides Wine and dependencies for running Fusion 360 on Linux"
-            echo ""
-            echo "Installation steps:"
-            echo "1. Download the installer script:"
-            echo "   curl -L https://raw.githubusercontent.com/cryinkfly/Autodesk-Fusion-360-for-Linux/main/files/setup/autodesk_fusion_installer_x86-64.sh -o installer.sh"
-            echo ""
-            echo "2. Make it executable:"
-            echo "   chmod +x installer.sh"
-            echo ""
-            echo "3. Run the installer (basic):"
-            echo "   ./installer.sh --install --default"
-            echo ""
-            echo "4. Or run with all extensions:"
-            echo "   ./installer.sh --install --default --full"
-            echo ""
-            echo "System Requirements:"
-            echo "  - 4+ GB RAM (6+ GB recommended)"
-            echo "  - 3 GB disk space"
-            echo "  - DirectX11 capable GPU (1+ GB VRAM)"
-            echo "  - Active Fusion 360 license required"
-            echo ""
-            echo "For more information: https://github.com/cryinkfly/Autodesk-Fusion-360-for-Linux"
+            echo "Wine version: $(wine --version)"
+            echo "Wine prefix: $PWD/.wine"
             echo ""
 
             export PROJECT_ROOT=$PWD
@@ -103,16 +86,8 @@
             export WINEARCH=win64
             export WINEDLLOVERRIDES="mscoree,mshtml="
 
-            # Set up Wine prefix if it doesn't exist
-            if [ ! -d "$WINEPREFIX" ]; then
-              echo "Creating Wine prefix at $WINEPREFIX..."
-              wineboot -u
+            if [ ! -f ".fusion360-installed" ]; then
+              echo "⚠️  Fusion 360 not yet installed!"
+              echo "Run: ./install.sh"
+              echo ""
             fi
-
-            echo "Wine prefix: $WINEPREFIX"
-            echo "Wine version: $(wine --version)"
-          '';
-        };
-      }
-    );
-}
