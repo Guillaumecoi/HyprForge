@@ -6,26 +6,28 @@
 }:
 
 let
-  # Wrapper script that uses start-hyprland if available, otherwise Hyprland
-  hyprland-wrapper = pkgs.writeShellScript "hyprland-wrapper" ''
-    # Check if start-hyprland exists in PATH (means Home Manager is set up)
-    if command -v start-hyprland &> /dev/null; then
-      exec start-hyprland
-    else
-      exec Hyprland
-    fi
-  '';
-
-  # Custom Hyprland session that uses the wrapper
-  hyprland-session = pkgs.writeTextDir "share/wayland-sessions/hyprland.desktop" ''
+  # Create two separate Hyprland sessions
+  # 1. Direct Hyprland session (no Home Manager)
+  hyprland-session = (pkgs.writeTextDir "share/wayland-sessions/hyprland-direct.desktop" ''
     [Desktop Entry]
-    Name=Hyprland
-    Comment=An intelligent dynamic tiling Wayland compositor
-    Exec=${hyprland-wrapper}
+    Name=Hyprland (Direct)
+    Comment=Hyprland without Home Manager
+    Exec=Hyprland
     Type=Application
-    DesktopNames=Hyprland
+    DesktopNames=Hyprland-Direct
     Keywords=tiling;wayland;compositor;
-  '';
+  '').overrideAttrs (_: { passthru.providedSessions = [ "hyprland-direct" ]; });
+
+  # 2. Home Manager Hyprland session
+  hyprland-hm-session = (pkgs.writeTextDir "share/wayland-sessions/hyprland-hm.desktop" ''
+    [Desktop Entry]
+    Name=Hyprland (Home Manager)
+    Comment=Hyprland with Home Manager configuration
+    Exec=start-hyprland
+    Type=Application
+    DesktopNames=Hyprland-HomeManager
+    Keywords=tiling;wayland;compositor;
+  '').overrideAttrs (_: { passthru.providedSessions = [ "hyprland-hm" ]; });
 in
 {
   # SDDM Display Manager Configuration
@@ -67,6 +69,7 @@ in
         # Use a Bibata variant provided by the `bibata-cursors` package
         # (installed in `systemPackages`). Pick a Modern Classic variant.
         CursorTheme = "Bibata-Modern-Classic";
+        CursorSize = 24;
         Font = "JetBrainsMono Nerd Font";
         EnableAvatars = true;
         DisableAvatarsThreshold = 7;
@@ -76,7 +79,6 @@ in
       Wayland = {
         CompositorCommand = "${pkgs.kdePackages.kwin}/bin/kwin_wayland --no-lockscreen";
         EnableHiDPI = true;
-        SessionDir = "${hyprland-session}/share/wayland-sessions";
       };
 
       # Autologin (disabled by default, uncomment to enable)
@@ -113,14 +115,19 @@ in
     kdePackages.qtvirtualkeyboard
   ];
 
-  # Set default session to Hyprland
-  services.displayManager.defaultSession = "hyprland";
+  # Register custom Hyprland sessions with the display manager
+  services.displayManager.sessionPackages = [
+    hyprland-session
+    hyprland-hm-session
+  ];
 
   # Create SDDM configuration directory
   systemd.tmpfiles.rules = [
     "d /var/lib/sddm 0755 sddm sddm"
     "d /var/lib/sddm/.config 0755 sddm sddm"
     "d /var/lib/sddm/.config/hypr 0755 sddm sddm"
+    "d /var/lib/sddm/.icons 0755 sddm sddm"
+    "d /var/lib/sddm/.icons/default 0755 sddm sddm"
   ];
 
   # Create a basic Hyprland config for SDDM
@@ -169,10 +176,17 @@ in
     '';
   };
 
-  # Link the config to SDDM's home directory
+  # Link the config to SDDM's home directory and set up cursor theme
   system.activationScripts.sddmConfig = ''
     if [ ! -f /var/lib/sddm/.config/hypr/hyprland.conf ]; then
       ln -sf /etc/sddm/hyprland.conf /var/lib/sddm/.config/hypr/hyprland.conf 2>/dev/null || true
     fi
+
+    # Set up cursor theme for SDDM
+    cat > /var/lib/sddm/.icons/default/index.theme << EOF
+[Icon Theme]
+Inherits=Bibata-Modern-Classic
+EOF
+    chown -R sddm:sddm /var/lib/sddm/.icons
   '';
 }

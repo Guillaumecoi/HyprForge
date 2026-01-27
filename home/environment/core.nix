@@ -23,6 +23,14 @@ in
     XDG_DATA_HOME = "$HOME/.local/share";
     XDG_CACHE_HOME = "$HOME/.cache";
     XDG_STATE_HOME = "$HOME/.local/state";
+    # Runtime dir - usually provided by systemd --user as /run/user/$UID
+    # Provide a safe fallback for environments that don't set it automatically.
+    XDG_RUNTIME_DIR = "/run/user/$UID";
+
+    # XDG Desktop Portal and Session variables for Hyprland
+    XDG_CURRENT_DESKTOP = "Hyprland";
+    XDG_SESSION_TYPE = "wayland";
+    XDG_SESSION_DESKTOP = "Hyprland";
 
     # Zsh - use XDG directories
     ZDOTDIR = "$HOME/.config/zsh";

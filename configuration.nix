@@ -73,6 +73,10 @@ in
     config.common.default = "*";
   };
 
+  # Enable RealtimeKit for better audio/video performance
+  # Fixes xdg-desktop-portal warnings about missing RealtimeKit
+  security.rtkit.enable = true;
+
   # Enable PAM authentication for screen locking
   # Required for hyprlock to verify passwords when unlocking
   security.pam.services.hyprlock = { };
@@ -136,17 +140,6 @@ in
         })
       ]
     );
-
-  # Enable Docker
-  # virtualisation.docker.enable = true;
-  virtualisation.podman = {
-    enable = true;
-    dockerCompat = true; # Docker compatibility
-    defaultNetwork.settings.dns_enabled = true;
-  };
-
-  # Enable VirtualBox host kernel modules
-  virtualisation.virtualbox.host.enable = true;
 
   nix.settings.experimental-features = [
     "nix-command"

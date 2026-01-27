@@ -23,7 +23,7 @@
   "podman" # Rootless containers
   "podman-compose" # Docker Compose for Podman
   "podman-tui" # Terminal UI for Podman
-  "virtualbox" # VirtualBox virtualization
+  # "virtualbox" # VirtualBox virtualization
 
   # Development
   "direnv" # Environment switcher
