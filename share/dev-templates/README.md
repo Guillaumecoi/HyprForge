@@ -205,6 +205,23 @@ npm init -y
 npm install express
 ```
 
+### Autodesk Fusion 360 for Linux
+
+```bash
+cd ~/Projects/cad-projects
+dev-init fusion360
+
+# Download and run the installer
+curl -L https://raw.githubusercontent.com/cryinkfly/Autodesk-Fusion-360-for-Linux/main/files/setup/autodesk_fusion_installer_x86-64.sh -o installer.sh
+chmod +x installer.sh
+
+# Basic installation
+./installer.sh --install --default
+
+# Or with all extensions
+./installer.sh --install --default --full
+```
+
 ### VirtualBox VMs
 
 ```bash
