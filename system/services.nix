@@ -14,4 +14,8 @@
     enableExtensionPack = true; # Required for USB 2.0/3.0, RDP, PXE boot, etc.
   };
 
+  # Distrobox support - alternative to Flatpak for containerized apps
+  # Uses Podman backend for running full Linux distributions in containers
+  virtualisation.distrobox.enable = true;
+
 }

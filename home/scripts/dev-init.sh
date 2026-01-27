@@ -79,7 +79,11 @@ fi
 
 # Copy template files
 echo "📋 Copying template '$TEMPLATE'..."
-cp "$TEMPLATE_PATH/flake.nix" .
+cp -r "$TEMPLATE_PATH"/* .
+
+# Fix permissions (files from Nix store are read-only)
+echo "🔧 Fixing permissions..."
+chmod -R u+w .
 
 # Ask flake.nix has been edited to fit the project
 echo "✏️  Please edit 'flake.nix' to customize it for your project."
