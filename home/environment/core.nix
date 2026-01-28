@@ -32,6 +32,10 @@ in
     XDG_SESSION_TYPE = "wayland";
     XDG_SESSION_DESKTOP = "Hyprland";
 
+    # Add Flatpak directories to XDG_DATA_DIRS for app launchers
+    # This makes Flatpak .desktop files visible to rofi and other launchers
+    XDG_DATA_DIRS = "$HOME/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:$XDG_DATA_DIRS";
+
     # Zsh - use XDG directories
     ZDOTDIR = "$HOME/.config/zsh";
 
