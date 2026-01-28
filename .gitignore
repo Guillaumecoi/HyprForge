@@ -2,12 +2,6 @@
 result
 result-*
 
-# Machine-specific configuration files
-user.nix
-hardware-configuration.nix
-home/home-config.nix
-home/packages.nix
-
 # Editor files
 .vscode/
 .idea/
