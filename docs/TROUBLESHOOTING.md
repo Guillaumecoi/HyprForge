@@ -2,6 +2,49 @@
 
 ## Installation Issues
 
+### Hyprland kicks back to SDDM login on first boot
+
+**Symptom:** After installation, you select a Hyprland session at SDDM, see a flash of black screen, then get kicked back to the login screen.
+
+**Cause:** Hyprland requires a configuration file to start. A minimal config is installed during installation, but if it's missing or corrupted, Hyprland will fail.
+
+**Solution:**
+
+**First, try the Direct session:**
+1. At SDDM, select **"Hyprland (Direct)"**
+2. Login with your username and password
+3. Open a terminal (SUPER + T)
+4. Run Home Manager setup:
+   ```bash
+   cd ~/HyprForge/install && bash post-install.sh
+   ```
+5. After completion (5-15 minutes), logout and login again
+6. Now select **"Hyprland"** (the Home Manager version)
+
+**If Direct session also fails:**
+```bash
+# Press CTRL + ALT + F2 to get to TTY
+# Login with your username
+
+# Check if minimal config exists
+ls -la ~/.config/hypr/hyprland.conf
+
+# If missing, reinstall it
+mkdir -p ~/.config/hypr
+cp ~/HyprForge/share/minimal-hyprland.conf ~/.config/hypr/hyprland.conf
+
+# Now try Home Manager setup
+cd ~/HyprForge/install
+bash post-install.sh
+
+# Return to graphical login
+# Press CTRL + ALT + F1
+```
+
+**Understanding the two sessions:**
+- **Hyprland (Direct)**: Basic Hyprland with minimal config - always works, use for emergency/setup
+- **Hyprland**: Full-featured with Home Manager config - use this after running post-install.sh
+
 ### Black screen after boot
 
 - Try `CTRL + ALT + F2` for a TTY console

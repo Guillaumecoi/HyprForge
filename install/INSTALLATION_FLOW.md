@@ -83,16 +83,32 @@ sudo /root/setup-encrypted-swap.sh /dev/nvme0n1p2
    - Copy `setup-encrypted-swap.sh` to `/mnt/root/`
 10. **NixOS Installation** - Run `nixos-install`
 11. **Password Setup** - Set user password
-12. **Home Manager Prep** - Clone HyprForge to user's home
-13. **Reboot**
+12. **Home Manager Prep** - Copy HyprForge to user's home
+13. **Minimal Config** - Install basic Hyprland config to `~/.config/hypr/`
+14. **Auto-setup Script** - Create `.setup-home-manager.sh` for first login
+15. **Reboot**
 
 ### Phase 3: First Boot
-1. System boots with encrypted root
-2. Enter LUKS password at boot
-3. Login with username/password
-4. Hyprland desktop loads
 
-### Phase 4: User Environment (post-install.sh)
+1. System boots (enter LUKS password if encrypted)
+2. Login at SDDM with username/password
+3. **Select "Hyprland (Direct)" session** (not just "Hyprland")
+4. You'll boot into a basic Hyprland desktop
+5. Terminal opens automatically with Home Manager setup
+6. Setup downloads and installs packages (5-15 minutes)
+7. After completion, logout
+
+### Phase 4: Using Full Configuration
+
+1. Login again at SDDM
+2. **Now select "Hyprland"** (without "Direct")
+3. Full-featured desktop with all your configurations!
+
+**Two Hyprland Sessions Explained:**
+- **Hyprland (Direct)**: Basic config, always works, use for first boot and emergencies
+- **Hyprland**: Full Home Manager config, use after running post-install.sh
+
+### Phase 5: Manual Setup (if auto-setup fails)
 ```bash
 cd ~/HyprForge/install
 bash post-install.sh

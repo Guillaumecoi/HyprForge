@@ -54,6 +54,18 @@ let
     echo -e "${pkgs.lib.concatStringsSep "\\n" formatted-keybinds}" | rofi -dmenu -markup-rows -p "Hyprland Keybindings"
   '';
 
+  # Create start-hyprland wrapper script
+  # This is what the "Hyprland (Home Manager)" SDDM session executes
+  start-hyprland-script = pkgs.writeShellScriptBin "start-hyprland" ''
+    # Source environment variables
+    if [ -f "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then
+      . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+    fi
+
+    # Start Hyprland with Home Manager configuration
+    exec ${pkgs-unstable.hyprland}/bin/Hyprland
+  '';
+
 in
 {
   # Hyprland window manager configuration
@@ -67,8 +79,11 @@ in
     };
   };
 
-  # Add keybinds helper script to user packages
-  home.packages = [ keybinds-script ];
+  # Add helper scripts to user packages
+  home.packages = [
+    keybinds-script
+    start-hyprland-script  # Makes start-hyprland command available
+  ];
 
   # Enable Catppuccin theming for Hyprland
   catppuccin.hyprland.enable = true;

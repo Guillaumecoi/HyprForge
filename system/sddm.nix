@@ -6,22 +6,24 @@
 }:
 
 let
-  # Create two separate Hyprland sessions
-  # 1. Direct Hyprland session (no Home Manager)
+  # Create two Hyprland sessions for different use cases:
+  # 1. Direct Hyprland - Emergency fallback, uses basic system config
+  #    Works immediately after installation before Home Manager runs
   hyprland-session = (pkgs.writeTextDir "share/wayland-sessions/hyprland-direct.desktop" ''
     [Desktop Entry]
     Name=Hyprland (Direct)
-    Comment=Hyprland without Home Manager
+    Comment=Hyprland with basic configuration
     Exec=Hyprland
     Type=Application
     DesktopNames=Hyprland-Direct
     Keywords=tiling;wayland;compositor;
   '').overrideAttrs (_: { passthru.providedSessions = [ "hyprland-direct" ]; });
 
-  # 2. Home Manager Hyprland session
+  # 2. Home Manager Hyprland - Full featured, uses Home Manager config
+  #    Only works after running Home Manager setup (creates start-hyprland wrapper)
   hyprland-hm-session = (pkgs.writeTextDir "share/wayland-sessions/hyprland-hm.desktop" ''
     [Desktop Entry]
-    Name=Hyprland (Home Manager)
+    Name=Hyprland
     Comment=Hyprland with Home Manager configuration
     Exec=start-hyprland
     Type=Application
@@ -115,10 +117,10 @@ in
     kdePackages.qtvirtualkeyboard
   ];
 
-  # Register custom Hyprland sessions with the display manager
+  # Register both Hyprland sessions with the display manager
   services.displayManager.sessionPackages = [
-    hyprland-session
-    hyprland-hm-session
+    hyprland-session      # Direct - works immediately
+    hyprland-hm-session   # Home Manager - works after setup
   ];
 
   # Create SDDM configuration directory

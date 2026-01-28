@@ -589,17 +589,160 @@ setup_home_manager() {
 
     print_success "HyprForge copied to /home/${USERNAME}/HyprForge"
 
-    # Try to run home-manager setup now (this might fail if home-manager isn't available in the live environment)
-    print_info "Attempting to initialize Home Manager now..."
-    echo ""
+    # Create minimal Hyprland config so it can start before Home Manager runs
+    print_info "Installing minimal Hyprland configuration..."
+    mkdir -p "/mnt/home/${USERNAME}/.config/hypr"
 
-    if nixos-enter --root /mnt -c "su - ${USERNAME} -c 'cd ~/HyprForge && home-manager switch --flake .#${USERNAME}@${HOSTNAME}'" 2>/dev/null; then
-        print_success "Home Manager initialized successfully!"
-    else
-        print_warning "Could not initialize Home Manager during installation"
-        print_info "Run the post-install script after first boot:"
-        print_info "  cd ~/HyprForge/install && bash post-install.sh"
-    fi
+    cat > "/mnt/home/${USERNAME}/.config/hypr/hyprland.conf" << 'HYPRCONF'
+# Minimal Hyprland configuration for first boot
+# This will be replaced by Home Manager on first setup
+
+monitor=,preferred,auto,1
+
+# Basic input settings
+input {
+    kb_layout = us
+    follow_mouse = 1
+    touchpad {
+        natural_scroll = true
+    }
+    sensitivity = 0
+}
+
+# Basic appearance
+general {
+    gaps_in = 5
+    gaps_out = 10
+    border_size = 2
+    col.active_border = rgba(cba6f7ff)
+    col.inactive_border = rgba(313244ff)
+    layout = dwindle
+}
+
+decoration {
+    rounding = 10
+    blur {
+        enabled = true
+        size = 3
+        passes = 1
+    }
+    drop_shadow = yes
+    shadow_range = 4
+    shadow_render_power = 3
+    col.shadow = rgba(1a1a1aee)
+}
+
+animations {
+    enabled = yes
+    bezier = myBezier, 0.05, 0.9, 0.1, 1.05
+    animation = windows, 1, 3, myBezier
+    animation = windowsOut, 1, 3, default, popin 80%
+    animation = border, 1, 5, default
+    animation = fade, 1, 3, default
+    animation = workspaces, 1, 3, default
+}
+
+dwindle {
+    pseudotile = yes
+    preserve_split = yes
+}
+
+master {
+    new_is_master = true
+}
+
+gestures {
+    workspace_swipe = on
+}
+
+# Essential keybindings
+$mainMod = SUPER
+
+bind = $mainMod, T, exec, kitty
+bind = $mainMod, Q, killactive,
+bind = $mainMod, M, exit,
+bind = $mainMod, V, togglefloating,
+bind = $mainMod, F, fullscreen,
+
+# Move focus with mainMod + arrow keys
+bind = $mainMod, left, movefocus, l
+bind = $mainMod, right, movefocus, r
+bind = $mainMod, up, movefocus, u
+bind = $mainMod, down, movefocus, d
+
+# Switch workspaces with mainMod + [0-9]
+bind = $mainMod, 1, workspace, 1
+bind = $mainMod, 2, workspace, 2
+bind = $mainMod, 3, workspace, 3
+bind = $mainMod, 4, workspace, 4
+bind = $mainMod, 5, workspace, 5
+bind = $mainMod, 6, workspace, 6
+bind = $mainMod, 7, workspace, 7
+bind = $mainMod, 8, workspace, 8
+bind = $mainMod, 9, workspace, 9
+bind = $mainMod, 0, workspace, 10
+
+# Move active window to a workspace with mainMod + SHIFT + [0-9]
+bind = $mainMod SHIFT, 1, movetoworkspace, 1
+bind = $mainMod SHIFT, 2, movetoworkspace, 2
+bind = $mainMod SHIFT, 3, movetoworkspace, 3
+bind = $mainMod SHIFT, 4, movetoworkspace, 4
+bind = $mainMod SHIFT, 5, movetoworkspace, 5
+bind = $mainMod SHIFT, 6, movetoworkspace, 6
+bind = $mainMod SHIFT, 7, movetoworkspace, 7
+bind = $mainMod SHIFT, 8, movetoworkspace, 8
+bind = $mainMod SHIFT, 9, movetoworkspace, 9
+bind = $mainMod SHIFT, 0, movetoworkspace, 10
+
+# Mouse bindings
+bindm = $mainMod, mouse:272, movewindow
+bindm = $mainMod, mouse:273, resizewindow
+HYPRCONF
+
+    nixos-enter --root /mnt -c "chown -R ${USERNAME}:users /home/${USERNAME}/.config"
+    print_success "Minimal Hyprland config installed"
+
+    # Create a script for the user to run on first login
+    print_info "Creating post-install script..."
+    cat > "/mnt/home/${USERNAME}/.setup-home-manager.sh" << 'SETUP_SCRIPT'
+#!/usr/bin/env bash
+# Auto-run Home Manager setup on first login
+
+echo ""
+echo "╔════════════════════════════════════════════════════════════════╗"
+echo "║  Welcome to HyprForge! Setting up your environment...         ║"
+echo "╚════════════════════════════════════════════════════════════════╝"
+echo ""
+echo "This will configure your Hyprland desktop environment."
+echo "It will take 5-15 minutes to download and install all packages."
+echo ""
+
+cd ~/HyprForge/install
+bash post-install.sh
+
+# Remove this script after successful run
+if [ $? -eq 0 ]; then
+    rm -f ~/.setup-home-manager.sh
+    # Remove the auto-run from .zshrc
+    sed -i '/setup-home-manager/d' ~/.zshrc 2>/dev/null || true
+fi
+SETUP_SCRIPT
+
+    chmod +x "/mnt/home/${USERNAME}/.setup-home-manager.sh"
+    nixos-enter --root /mnt -c "chown ${USERNAME}:users /home/${USERNAME}/.setup-home-manager.sh"
+
+    # Add auto-run to .zshrc (will be executed on first shell login)
+    print_info "Configuring auto-run on first login..."
+    cat > "/mnt/home/${USERNAME}/.zshrc" << 'ZSHRC'
+# Auto-run Home Manager setup on first login
+if [ -f ~/.setup-home-manager.sh ]; then
+    ~/.setup-home-manager.sh
+fi
+ZSHRC
+    nixos-enter --root /mnt -c "chown ${USERNAME}:users /home/${USERNAME}/.zshrc"
+
+    print_success "Home Manager will be set up automatically on first login"
+    print_info "Or you can run manually: cd ~/HyprForge/install && bash post-install.sh"
 }
 
 # Final message
@@ -613,27 +756,39 @@ print_complete() {
     echo -e "╚════════════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
     echo ""
-    print_info "Your NixOS system with Hyprland is ready!"
+    print_info "Your NixOS system is ready!"
     echo ""
     print_info "Next steps:"
     echo -e "  1. Reboot: ${BOLD}reboot${NC}"
     echo -e "  2. Login with username: ${BOLD}${USERNAME}${NC}"
-    echo -e "  3. If needed, setup Home Manager: ${BOLD}cd ~/HyprForge/install && bash post-install.sh${NC}"
+    echo -e "  3. ${BOLD}IMPORTANT: Select 'Hyprland (Direct)' at SDDM${NC}"
+    echo -e "  4. Open terminal (SUPER + T) and run:"
+    echo -e "     ${BOLD}cd ~/HyprForge/install && bash post-install.sh${NC}"
+    echo -e "  5. After setup completes, logout and login again"
+    echo -e "  6. Now select 'Hyprland' (full version) at SDDM"
 
     if [[ "${ENCRYPT_OS}" == "true" ]] && [[ $SWAP_SIZE_GB -gt 0 ]]; then
-        echo -e "  4. (Optional) Encrypt swap: ${BOLD}sudo /root/setup-encrypted-swap.sh${NC}"
-        echo -e "  5. Press ${BOLD}SUPER + T${NC} for terminal"
-        echo -e "  6. Press ${BOLD}SUPER + SLASH${NC} to see all keybindings"
-    else
-        echo -e "  4. Press ${BOLD}SUPER + T${NC} for terminal"
-        echo -e "  5. Press ${BOLD}SUPER + SLASH${NC} to see all keybindings"
+        echo ""
+        print_warning "Encrypted System: You will need to enter your LUKS passphrase at boot"
+        echo -e "  5. (Optional) Encrypt swap: ${BOLD}sudo /root/setup-encrypted-swap.sh${NC}"
+    elif [[ "${ENCRYPT_OS}" == "true" ]]; then
+        echo ""
+        print_warning "Encrypted System: You will need to enter your LUKS passphrase at boot"
     fi
 
     echo ""
-    print_info "System config: /etc/nixos"
-    print_info "User config: ~/HyprForge"
-    print_info "To rebuild system: ${BOLD}sudo nixos-rebuild switch --flake /etc/nixos#${HOSTNAME}${NC}"
-    print_info "To rebuild user env: ${BOLD}home-manager switch --flake ~/HyprForge#${USERNAME}@${HOSTNAME}${NC}"
+    print_info "Useful Hyprland keybindings (after setup):"
+    echo -e "  • ${BOLD}SUPER + T${NC}     → Terminal"
+    echo -e "  • ${BOLD}SUPER + A${NC}     → App launcher"
+    echo -e "  • ${BOLD}SUPER + SLASH${NC} → Show all keybindings"
+    echo ""
+    print_info "Configuration locations:"
+    echo "  • System config: /etc/nixos"
+    echo "  • User config: ~/HyprForge"
+    echo ""
+    print_info "To rebuild later:"
+    echo -e "  • System: ${BOLD}sudo nixos-rebuild switch --flake /etc/nixos#${HOSTNAME}${NC}"
+    echo -e "  • User:   ${BOLD}home-manager switch --flake ~/HyprForge#${USERNAME}@${HOSTNAME}${NC}"
     echo ""
 
     if confirm "Reboot now?"; then
