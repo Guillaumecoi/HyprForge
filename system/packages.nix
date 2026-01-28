@@ -28,8 +28,8 @@
 
     wireplumber # PipeWire session manager
     pavucontrol # Volume control GUI
-    # bluez # Bluetooth stack
-    # blueman # Bluetooth GUI
+    bluez # Bluetooth stack
+    blueman # Bluetooth GUI
 
     # ===== PROGRAMMING LANGUAGES =====
     python3 # Python interpreter

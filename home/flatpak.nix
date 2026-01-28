@@ -7,7 +7,7 @@
 let
   # List of Flatpak packages to install for this user
   flatpakPackages = [
-    "com.usebottles.bottles"         # Wine GUI for Windows apps (Fusion 360)
+    # "com.usebottles.bottles"         # Wine GUI for Windows apps (Fusion 360)
 
     # Add your personal apps here (uncomment as needed):
     # "com.spotify.Client"              # Spotify music
