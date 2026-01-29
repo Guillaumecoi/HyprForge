@@ -11,50 +11,23 @@
         hide_cursor = true;
       };
 
+      animations = {
+        enabled = true;
+        fade_in = {
+          duration = 300;
+          bezier = "easeOutQuint";
+        };
+        fade_out = {
+          duration = 300;
+          bezier = "easeOutQuint";
+        };
+      };
+
       background = [
         {
-          path = "~/Pictures/Wallpapers/sakura-gate.jpg";
+          path = "~/Pictures/Wallpapers/nix/sakura-gate.jpg";
           blur_passes = 1;
-          blur_size = 4;
-        }
-      ];
-
-      input-field = [
-        {
-          size = "250, 50";
-          position = "0, -80";
-          monitor = "";
-          dots_center = true;
-          fade_on_empty = false;
-          placeholder_text = "<i>Password...</i>";
-          outer_color = "rgb(cba6f7)";
-          inner_color = "rgb(1e1e2e)";
-          font_color = "rgb(cdd6f4)";
-          outline_thickness = 2;
-          rounding = 15;
-        }
-      ];
-
-      # Time label
-      label = [
-        {
-          monitor = "";
-          text = ''cmd[update:1000] echo "<b><big> $(date +"%H:%M") </big></b>"'';
-          color = "rgba(205, 214, 244, 1.0)";
-          font_size = 64;
-          position = "0, 80";
-          halign = "center";
-          valign = "center";
-        }
-        # Date label
-        {
-          monitor = "";
-          text = ''cmd[update:1000] echo "$(date +"%A, %d %B")"'';
-          color = "rgba(186, 194, 222, 1.0)";
-          font_size = 18;
-          position = "0, -15";
-          halign = "center";
-          valign = "center";
+          blur_size = 2;
         }
       ];
     };

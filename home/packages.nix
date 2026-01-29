@@ -69,6 +69,7 @@
   # Utilities
   "hyprpicker" # Color picker
   "cliphist" # Clipboard history
+  "swayidle" # Idle management for Wayland
 
   # ===== SYSTEM UTILITIES ===== #
 

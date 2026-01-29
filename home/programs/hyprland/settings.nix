@@ -17,6 +17,11 @@
     "wl-paste --type image --watch cliphist store" # Store image clipboard items
     "gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'" # Set GTK dark theme
     "gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'" # Set color scheme preference
+    # Start an idle manager: lock with hyprlock then suspend after extended idle
+    "swayidle -w \\
+      timeout 300 'hyprctl dispatch exec hyprlock' \\
+      timeout 600 'systemctl suspend' \\
+      resume 'hyprctl dispatch exec hyprlock'"
   ];
 
   # General appearance and behavior
