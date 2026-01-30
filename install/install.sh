@@ -470,6 +470,9 @@ setup_dotfiles() {
     # Clone from GitHub
     nix-shell -p git --run "git clone https://github.com/GuillaumeCoi/HyprForge.git /mnt/etc/nixos"
 
+    # remove .git to avoid issues
+    rm -rf /mnt/etc/nixos/.git
+
     # Generate hardware configuration
     print_info "Generating hardware configuration..."
     nixos-generate-config --root /mnt --show-hardware-config > /mnt/etc/nixos/hardware-configuration.nix
