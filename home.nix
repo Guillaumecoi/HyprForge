@@ -23,8 +23,10 @@ let
     programEntries;
   programImports = map (dir: ./home/programs/${dir}/${dir}.nix) programDirs;
 
-  # Import unified package list
-  packageList = import ./home/packages.nix { inherit pkgs pkgs-unstable; };
+  # Import unified package list (returns { nixPackages, flatpakPackages })
+  packages = import ./home/packages.nix { inherit pkgs pkgs-unstable; };
+  packageList = packages.nixPackages;
+  flatpakList = packages.flatpakPackages;
 
   # Load lists of known Home Manager modules from local JSON files
   # Update these lists by running: ./home/local-scripts/update-hm-programs.sh
@@ -72,7 +74,6 @@ in
     ./home/scripts.nix
     ./home/environment.nix
     ./home/theme.nix
-    ./home/flatpak.nix
     ./theme/xdg.nix
   ]
   ++ programImports;
@@ -106,6 +107,40 @@ in
         };
       })
       hmServiceModules
+  );
+
+  # Flatpak installation from flatpakList
+  home.activation.installFlatpaks = lib.hm.dag.entryAfter ["writeBoundary"] (
+    let
+      flatpakPackages = flatpakList;
+    in
+    if flatpakPackages != [] then ''
+      # Use full path to flatpak from Nix store
+      FLATPAK="${pkgs.flatpak}/bin/flatpak"
+
+      # Add Flathub remote if not already added (silent)
+      if ! $FLATPAK remote-list --user 2>/dev/null | grep -q flathub; then
+        echo "📦 Adding Flathub remote..."
+        $FLATPAK remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo 2>/dev/null || true
+      fi
+
+      # Install each package (only show output for new installations)
+      NEW_INSTALLS=0
+      ${lib.concatMapStringsSep "\n" (pkg: ''
+        if ! $FLATPAK list --user 2>/dev/null | grep -q "${pkg}"; then
+          if [ $NEW_INSTALLS -eq 0 ]; then
+            echo "📦 Installing Flatpak packages..."
+          fi
+          echo "  Installing ${pkg}..."
+          $FLATPAK install --user -y flathub "${pkg}" 2>/dev/null || echo "  ⚠️  Failed to install ${pkg}"
+          NEW_INSTALLS=$((NEW_INSTALLS + 1))
+        fi
+      '') flatpakPackages}
+
+      if [ $NEW_INSTALLS -gt 0 ]; then
+        echo "✅ Installed $NEW_INSTALLS new Flatpak package(s)"
+      fi
+    '' else ""
   );
 
   # Copy files to their appropriate locations, overwriting existing ones

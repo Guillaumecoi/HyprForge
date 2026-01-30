@@ -5,7 +5,9 @@
 # Others will be installed as bare packages via home.packages
 # Programs with custom configs stay in home/programs/<name>/<name>.nix
 
-[
+let
+  # search for nixpkgs packages with `nix search nixpkgs <name>` or browse https://search.nixos.org/packages
+  nixPackages = [
   # ===== DEVELOPMENT ===== #
 
   # Editors & IDEs
@@ -15,9 +17,9 @@
 
   # Version Control
   "git" # Git version control
-  "gh" # GitHub CLI
-  "lazygit" # Terminal git UI
-  "delta" # Better git diff
+  # "gh" # GitHub CLI
+  # "lazygit" # Terminal git UI
+  # "delta" # Better git diff
 
   # Containers
   "podman" # Rootless containers
@@ -48,7 +50,7 @@
   "kitty" # GPU accalerated terminal emulator
   "starship" # Prompt
   "fzf" # Fuzzy finder
-  # "zoxide" # Smarter cd command
+  "zoxide" # Smarter cd command
   # "ripgrep" # Faster grep
   # "bat" # Cat clone with syntax highlighting
   # "fd" # Faster find
@@ -65,11 +67,11 @@
   "gtk" # GTK runtime (for GTK apps)
   "wlogout" # Logout/suspend/shutdown menu
   "hyprlock" # Screen locker for Hyprland
+  "swayidle" # Idle management for Wayland
 
   # Utilities
   "hyprpicker" # Color picker
   "cliphist" # Clipboard history
-  "swayidle" # Idle management for Wayland
 
   # ===== SYSTEM UTILITIES ===== #
 
@@ -179,4 +181,27 @@
   # "heroic" # Epic/GOG launcher
   # "gamemode" # Gaming optimization
   # "mangohud" # Performance overlay
-]
+  ];
+
+  # ===== FLATPAK PACKAGES ===== #
+  # These are installed via Flatpak (not Nix packages)
+  # Installation handled automatically by home.nix activation
+  # search for flatpaks with `flatpak search <name>` or browse https://flathub.org/apps/
+  flatpakPackages = [
+    "com.usebottles.bottles"         # Wine GUI for Windows apps
+    "com.github.tchx84.Flatseal"    # Flatpak permissions manager
+    # "com.spotify.Client"              # Spotify music
+    # "com.discordapp.Discord"          # Discord chat
+    # "org.signal.Signal"               # Signal messaging
+    # "com.slack.Slack"                 # Slack
+    # "org.gimp.GIMP"                   # GIMP image editor
+    # "org.inkscape.Inkscape"           # Inkscape vector graphics
+    # "com.obsproject.Studio"           # OBS Studio
+    # "org.audacityteam.Audacity"       # Audacity audio editor
+    # "org.videolan.VLC"                # VLC media player
+    # "com.valvesoftware.Steam"         # Steam gaming
+  ];
+in
+{
+  inherit nixPackages flatpakPackages;
+}
