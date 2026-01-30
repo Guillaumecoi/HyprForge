@@ -156,8 +156,8 @@ in
     ", XF86MonBrightnessDown, [Hardware Controls|Brightness] decrease brightness, exec, brightnessctl set 5%-"
     "$mainMod, F11, [Hardware Controls|Audio] decrease volume, exec, wpctl set-volume @DEFAULT_SINK@ 5%-"
     ", XF86AudioLowerVolume, [Hardware Controls|Audio] decrease volume, exec, wpctl set-volume @DEFAULT_SINK@ 5%-"
-    "$mainMod, F12, [Hardware Controls|Audio] increase volume, exec, wpctl set-volume @DEFAULT_SINK@ 5%+"
-    ", XF86AudioRaiseVolume, [Hardware Controls|Audio] increase volume, exec, wpctl set-volume @DEFAULT_SINK@ 5%+"
+    "$mainMod, F12, [Hardware Controls|Audio] increase volume, exec, wpctl set-volume @DEFAULT_SINK@ 5%+ -l 1.5"
+    ", XF86AudioRaiseVolume, [Hardware Controls|Audio] increase volume, exec, wpctl set-volume @DEFAULT_SINK@ 5%+ -l 1.5"
   ];
 
   # Non-repeat bindings with descriptions (binddl)

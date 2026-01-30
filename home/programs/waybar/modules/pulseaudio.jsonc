@@ -6,7 +6,7 @@
     "on-click": "pavucontrol",
     "on-click-right": "wpctl set-mute @DEFAULT_SINK@ toggle",
     "on-click-middle": "wpctl set-volume @DEFAULT_SINK@ 100%",
-    "on-scroll-up": "wpctl set-volume @DEFAULT_SINK@ +5%",
+    "on-scroll-up": "wpctl set-volume @DEFAULT_SINK@ 5%+ -l 1.5",
     "on-scroll-down": "wpctl set-volume @DEFAULT_SINK@ 5%-",
     "tooltip-format": "{icon} {desc} // {volume}%",
     "scroll-step": 5,
@@ -17,8 +17,11 @@
       "phone": "",
       "portable": "",
       "car": "",
-      "default": ["󰕿", "󰖀", "󰕾"],
+      "default": [
+        "󰕿",
+        "󰖀",
+        "󰕾"
+      ],
     },
-    "max-volume": 150,
   },
 }
