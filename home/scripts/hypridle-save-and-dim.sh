@@ -61,9 +61,9 @@ fi
 
 # Send a one-minute warning notification (prefer dunstify for dunst)
 if command -v dunstify >/dev/null 2>&1; then
-  dunstify -u normal -t 60000 "Screen will be locked in 1 minute" "Locking in 60 seconds" || true
+  dunstify -u normal -t 60000 "Screen will be locked in 1 minute" || true
 elif command -v notify-send >/dev/null 2>&1; then
-  notify-send -u normal -t 60000 "Screen will be locked in 1 minute" "Locking in 60 seconds" || true
+  notify-send -u normal -t 60000 "Screen will be locked in 1 minute" || true
 fi
 
 exit 0
