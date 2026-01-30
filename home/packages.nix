@@ -67,7 +67,7 @@ let
   "gtk" # GTK runtime (for GTK apps)
   "wlogout" # Logout/suspend/shutdown menu
   "hyprlock" # Screen locker for Hyprland
-  "swayidle" # Idle management for Wayland
+  "hypridle" # Idle management for Wayland
 
   # Utilities
   "hyprpicker" # Color picker
