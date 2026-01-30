@@ -22,9 +22,9 @@ let
   # "delta" # Better git diff
 
   # Containers
-  "podman" # Rootless containers
-  "podman-compose" # Docker Compose for Podman
-  "podman-tui" # Terminal UI for Podman
+  # "podman" # Rootless containers Also enable this in system/services.nix
+  # "podman-compose" # Docker Compose for Podman
+  # "podman-tui" # Terminal UI for Podman
 
   # Development
   "direnv" # Environment switcher
@@ -41,7 +41,7 @@ let
   "python313Packages.grequests" # Async HTTP requests in Python (used by weather.py)
 
   # AI Assistants
-  "github-copilot-cli" # GitHub Copilot CLI
+  # "github-copilot-cli" # GitHub Copilot CLI
   # "claude-code" # Claude AI CLI
 
   # Shell & Terminal
@@ -139,7 +139,7 @@ let
 
   # Web Browsers
   "firefox" # Web browser
-  "brave" # Privacy-focused chrome browser
+  # "brave" # Privacy-focused chrome browser
   # "chromium" # Open-source Chrome
   # "tor-browser" # Anonymous browsing
 
