@@ -99,12 +99,14 @@ in
   # Enable zsh system-wide
   programs.zsh.enable = true;
 
+  # Home Manager module configuration
+  home-manager.backupFileExtension = "backup";
+
   users.users.${user.username} = {
     isNormalUser = true;
     extraGroups = [
       "wheel"
       "networkmanager"
-      "vboxusers"
       # "docker"                   # Uncomment if using Docker
     ];
     shell = pkgs.zsh;

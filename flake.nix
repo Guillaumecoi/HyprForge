@@ -91,22 +91,5 @@
             ;
         };
       };
-      # Also expose the same configuration under the hostname so
-      # `--flake ~/HyprForge#$(hostname)` resolves when you use hostname.
-      homeConfigurations.${user.hostname} = home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
-        modules = [
-          ./home.nix
-          catppuccin.homeModules.catppuccin
-        ];
-        extraSpecialArgs = {
-          inherit
-            inputs
-            pkgs-unstable
-            theme
-            catppuccin
-            ;
-        };
-      };
     };
 }

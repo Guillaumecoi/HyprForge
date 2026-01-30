@@ -6,30 +6,16 @@
 }:
 
 let
-  # Create two Hyprland sessions for different use cases:
-  # 1. Direct Hyprland - Emergency fallback, uses basic system config
-  #    Works immediately after installation before Home Manager runs
-  hyprland-session = (pkgs.writeTextDir "share/wayland-sessions/hyprland-direct.desktop" ''
-    [Desktop Entry]
-    Name=Hyprland (Direct)
-    Comment=Hyprland with basic configuration
-    Exec=Hyprland
-    Type=Application
-    DesktopNames=Hyprland-Direct
-    Keywords=tiling;wayland;compositor;
-  '').overrideAttrs (_: { passthru.providedSessions = [ "hyprland-direct" ]; });
-
-  # 2. Home Manager Hyprland - Full featured, uses Home Manager config
-  #    Only works after running Home Manager setup (creates start-hyprland wrapper)
-  hyprland-hm-session = (pkgs.writeTextDir "share/wayland-sessions/hyprland-hm.desktop" ''
+  # Custom Hyprland session that uses home-manager's start-hyprland wrapper
+  hyprland-session = pkgs.writeTextDir "share/wayland-sessions/hyprland.desktop" ''
     [Desktop Entry]
     Name=Hyprland
-    Comment=Hyprland with Home Manager configuration
+    Comment=An intelligent dynamic tiling Wayland compositor
     Exec=start-hyprland
     Type=Application
-    DesktopNames=Hyprland-HomeManager
+    DesktopNames=Hyprland
     Keywords=tiling;wayland;compositor;
-  '').overrideAttrs (_: { passthru.providedSessions = [ "hyprland-hm" ]; });
+  '';
 in
 {
   # SDDM Display Manager Configuration
@@ -118,10 +104,7 @@ in
   ];
 
   # Register both Hyprland sessions with the display manager
-  services.displayManager.sessionPackages = [
-    hyprland-session      # Direct - works immediately
-    hyprland-hm-session   # Home Manager - works after setup
-  ];
+  services.displayManager.defaultSession = "hyprland";
 
   # Create SDDM configuration directory
   systemd.tmpfiles.rules = [

@@ -634,14 +634,6 @@ dwindle {
     preserve_split = yes
 }
 
-master {
-    new_is_master = true
-}
-
-gestures {
-    workspace_swipe = on
-}
-
 # Essential keybindings
 $mainMod = SUPER
 

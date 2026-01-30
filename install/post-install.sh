@@ -151,7 +151,7 @@ setup_home_manager() {
 
     print_warning "Direct home-manager command failed, trying with nix-shell..."
     echo ""
-    if nix-shell -p home-manager --run "home-manager switch --flake $HOME/HyprForge#${username}"; then
+    if nix-shell -p home-manager --run "home-manager switch --flake $HOME/HyprForge#${username} -b old"; then
         print_success "Home Manager setup complete!"
         return 0
     fi
@@ -160,10 +160,10 @@ setup_home_manager() {
     echo ""
     print_info "You can try manually with:"
     echo -e "  ${BOLD}cd ~/HyprForge${NC}"
-    echo -e "  ${BOLD}home-manager switch --flake .#$(whoami)${NC}"
+    echo -e "  ${BOLD}home-manager switch --flake .#$(whoami) -b old${NC}"
     echo ""
     print_info "Or via nix-shell:"
-    echo -e "  ${BOLD}nix-shell -p home-manager --run 'home-manager switch --flake ~/HyprForge#$(whoami)'${NC}"
+    echo -e "  ${BOLD}nix-shell -p home-manager --run 'home-manager switch --flake ~/HyprForge#$(whoami) -b old'${NC}"
     exit 1
 }
 
