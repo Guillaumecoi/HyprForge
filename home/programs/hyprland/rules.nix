@@ -7,13 +7,14 @@
     # Suppress maximize event for all windows
     "suppress_event maximize, match:class .*"
 
-    # Opacity rules - specific rules first
-    "opacity 1.0 override 1.0 override, match:class ^(imv)$"
-    "opacity 1.0 override 1.0 override, match:class ^(eog)$"
-    "opacity 1.0 override 1.0 override, match:class ^(satty)$"
-    "opacity 0.95 0.95, match:class ^(firefox)$"
-    "opacity 0.80 0.80, match:class ^(kitty)$"
-    "opacity 0.90 0.90, match:class .*"
+    # Opacity rules - specific rules later to override general rule
+    "opacity 0.90 0.80, match:class .*"
+    "opacity 1.0 0.9, match:class ^(imv)$"
+    "opacity 1.0 0.9, match:class ^(eog)$"
+    "opacity 1.0 0.9, match:class ^(satty)$"
+    "opacity 1.0 0.9, match:class ^(.virt-manager-wrapped)$"
+    "opacity 1.0 0.9, match:class ^(firefox)$"
+    "opacity 0.80 0.70, match:class ^(kitty)$"
 
     # Float rules
     "float on, match:class ^(btop)$"
