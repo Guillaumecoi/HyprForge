@@ -4,12 +4,15 @@
 
 { pkgs, ... }:
 
+let
+  homeConfig = import ../home-config.nix;
+in
 {
   # Enable Catppuccin theme globally for all supported programs
   catppuccin = {
     enable = true;
-    flavor = "mocha"; # mocha (dark), macchiato, frappe, latte (light)
-    accent = "mauve"; # blue, flamingo, green, lavender, maroon, mauve, peach, pink, red, rosewater, sapphire, sky, teal, yellow
+    flavor = homeConfig.theme.flavor;
+    accent = homeConfig.theme.accent;
   };
 
   home.packages = with pkgs; [
@@ -18,9 +21,9 @@
 
     # GTK theme for GNOME apps (Nautilus, Thunar, etc.)
     (catppuccin-gtk.override {
-      accents = [ "mauve" ];
+      accents = [ homeConfig.theme.accent ];
       size = "standard";
-      variant = "mocha";
+      variant = homeConfig.theme.flavor;
     })
 
     # Qt theming with Kvantum (for Qt apps)

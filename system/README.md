@@ -24,11 +24,9 @@ hasNvidiaGpu = true;
 
 # Printing
 printerDrivers = [ "epson-escpr2" ];
-
-# Swap
-swapDevice = "/swapfile";
-swapSizeGB = 8;
 ```
+
+**Note:** Swap is handled automatically by `hardware-configuration.nix`.
 
 ## Rebuilding
 

@@ -11,6 +11,7 @@
 **Solution:**
 
 **First, try the Direct session:**
+
 1. At SDDM, select **"Hyprland (Direct)"**
 2. Login with your username and password
 3. Open a terminal (SUPER + T)
@@ -22,6 +23,7 @@
 6. Now select **"Hyprland"** (the Home Manager version)
 
 **If Direct session also fails:**
+
 ```bash
 # Press CTRL + ALT + F2 to get to TTY
 # Login with your username
@@ -42,6 +44,7 @@ bash post-install.sh
 ```
 
 **Understanding the two sessions:**
+
 - **Hyprland (Direct)**: Basic Hyprland with minimal config - always works, use for emergency/setup
 - **Hyprland**: Full-featured with Home Manager config - use this after running post-install.sh
 

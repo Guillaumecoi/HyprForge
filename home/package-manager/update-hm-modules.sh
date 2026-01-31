@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
-# Update the list of Home Manager program modules from GitHub
+# Update the list of Home Manager modules from GitHub
 
 set -euo pipefail
 
-PROGRAMS_FILE="$(dirname "$0")/../../home/hm-programs.json"
-SERVICES_FILE="$(dirname "$0")/../../home/hm-services.json"
-MISC_FILE="$(dirname "$0")/../../home/hm-misc.json"
+SCRIPT_DIR="$(dirname "$0")"
+PROGRAMS_FILE="$SCRIPT_DIR/hm-programs.json"
+SERVICES_FILE="$SCRIPT_DIR/hm-services.json"
+MISC_FILE="$SCRIPT_DIR/hm-misc.json"
 
 echo "Fetching Home Manager modules from GitHub..."
 

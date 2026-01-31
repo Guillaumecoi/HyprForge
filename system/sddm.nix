@@ -6,30 +6,16 @@
 }:
 
 let
-  # Create two Hyprland sessions for different use cases:
-  # 1. Direct Hyprland - Emergency fallback, uses basic system config
-  #    Works immediately after installation before Home Manager runs
-  hyprland-session = (pkgs.writeTextDir "share/wayland-sessions/hyprland-direct.desktop" ''
-    [Desktop Entry]
-    Name=Hyprland (Direct)
-    Comment=Hyprland with basic configuration
-    Exec=Hyprland
-    Type=Application
-    DesktopNames=Hyprland-Direct
-    Keywords=tiling;wayland;compositor;
-  '').overrideAttrs (_: { passthru.providedSessions = [ "hyprland-direct" ]; });
-
-  # 2. Home Manager Hyprland - Full featured, uses Home Manager config
-  #    Only works after running Home Manager setup (creates start-hyprland wrapper)
-  hyprland-hm-session = (pkgs.writeTextDir "share/wayland-sessions/hyprland-hm.desktop" ''
+  # Custom Hyprland session that uses home-manager's start-hyprland wrapper
+  hyprland-session = pkgs.writeTextDir "share/wayland-sessions/hyprland.desktop" ''
     [Desktop Entry]
     Name=Hyprland
-    Comment=Hyprland with Home Manager configuration
+    Comment=An intelligent dynamic tiling Wayland compositor
     Exec=start-hyprland
     Type=Application
-    DesktopNames=Hyprland-HomeManager
+    DesktopNames=Hyprland
     Keywords=tiling;wayland;compositor;
-  '').overrideAttrs (_: { passthru.providedSessions = [ "hyprland-hm" ]; });
+  '';
 in
 {
   # SDDM Display Manager Configuration
@@ -118,10 +104,7 @@ in
   ];
 
   # Register both Hyprland sessions with the display manager
-  services.displayManager.sessionPackages = [
-    hyprland-session      # Direct - works immediately
-    hyprland-hm-session   # Home Manager - works after setup
-  ];
+  services.displayManager.defaultSession = "hyprland";
 
   # Create SDDM configuration directory
   systemd.tmpfiles.rules = [
@@ -133,7 +116,7 @@ in
   ];
 
   # Create a basic Hyprland config for SDDM
-      environment.etc."sddm/hyprland.conf" = {
+  environment.etc."sddm/hyprland.conf" = {
     text = ''
       # Basic Hyprland configuration for SDDM
       monitor=,preferred,auto,1
@@ -180,15 +163,15 @@ in
 
   # Link the config to SDDM's home directory and set up cursor theme
   system.activationScripts.sddmConfig = ''
-    if [ ! -f /var/lib/sddm/.config/hypr/hyprland.conf ]; then
-      ln -sf /etc/sddm/hyprland.conf /var/lib/sddm/.config/hypr/hyprland.conf 2>/dev/null || true
-    fi
+        if [ ! -f /var/lib/sddm/.config/hypr/hyprland.conf ]; then
+          ln -sf /etc/sddm/hyprland.conf /var/lib/sddm/.config/hypr/hyprland.conf 2>/dev/null || true
+        fi
 
-    # Set up cursor theme for SDDM
-    cat > /var/lib/sddm/.icons/default/index.theme << EOF
-[Icon Theme]
-Inherits=Bibata-Modern-Classic
-EOF
-    chown -R sddm:sddm /var/lib/sddm/.icons
+        # Set up cursor theme for SDDM
+        cat > /var/lib/sddm/.icons/default/index.theme << EOF
+    [Icon Theme]
+    Inherits=Bibata-Modern-Classic
+    EOF
+        chown -R sddm:sddm /var/lib/sddm/.icons
   '';
 }

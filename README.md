@@ -226,8 +226,10 @@ Real-time weather display with forecast, right in Waybar.
 
 Curated list of 160+ popular applications across all categories. **Just uncomment what you want in `home/packages.nix`** - no hunting for package names:
 
+You can choose how each app is delivered: install native Nix packages for better performance and tighter system integration, or use Flatpaks for stronger sandboxing and isolation (better security and reproducibility). Both options are configured in `home/packages.nix`: native packages are collected in the `nixPackages` list, and Flatpaks are listed in the `flatpakPackages` list (Flatpaks are installed via Flatpak when `home-manager` activates).
+
 ```nix
-home.packages = with pkgs; [
+nixPackages = [
   # Browsers
   firefox          # Pre-configured with extensions
   # brave          # Uncomment to install
@@ -237,6 +239,12 @@ home.packages = with pkgs; [
   discord
   # slack          # Comment out to remove
   # zoom           # One line = one app
+];
+
+flatpakPackages = [
+  "com.usebottles.bottles"
+  "com.github.tchx84.Flatseal"
+  # "com.spotify.Client"              # Comment out to add spotify
 ];
 ```
 
@@ -385,34 +393,36 @@ HyprForge/
 ├── user.nix               # Your machine settings
 ├── configuration.nix      # System config
 ├── home.nix               # User environment
+├── hardware-configuration.nix
 │
 ├── home/
-│   ├── packages.nix       # ← ALL your user programs (file 1 of 2!)
+│   ├── home-config.nix    # Personal settings (gitignored)
+│   ├── packages.nix       # ← ALL your user programs
 │   ├── keybindings/       # Centralized keybindings & settings
+│   │   ├── default.nix    # Main entry point
+│   │   ├── converters.nix # Format converters for apps
 │   │   ├── global.nix     # Window manager (SUPER key)
-│   │   ├── local.nix      # Apps (CTRL/ALT)
-│   │   └── apps.nix       # Default applications
+│   │   └── local.nix      # Apps (CTRL/ALT)
+│   ├── environment/       # Environment variables & XDG
 │   ├── programs/          # ← Apps WITH home-manager configs
-│   │   ├── hyprland/      #   (auto-applied settings)
-│   │   ├── kitty/
-│   │   ├── neovim/
-│   │   ├── vscode/
-│   │   └── ...
-│   └── scripts/           # Custom utilities
+│   ├── scripts/           # Custom utilities
+│   ├── theme/             # Theme configuration
+│   └── package-manager/   # Package manager tooling
 │
 ├── system/
-│   └── packages.nix       # ← ALL system packages (file 2 of 2!)
+│   ├── packages.nix       # ← ALL system packages
+│   ├── fonts.nix          # System fonts
+│   ├── services.nix       # System services
+│   └── sddm.nix           # Display manager
 │
-├── dev-templates/         # Isolated dev environments
-│   ├── python/
-│   ├── rust/
-│   ├── javascript/
-│   └── ...
+├── share/
+│   ├── dev-templates/     # Isolated dev environments
+│   ├── wallpapers/        # Desktop wallpapers
+│   └── emoji/             # Emoji picker data
 │
-├── theme/
-│   └── theme.nix          # Catppuccin colors
-│
-└── docs/                  # Full documentation
+├── install/               # Installation scripts
+├── docs/                  # Full documentation
+└── screenshots/           # Project screenshots
 ```
 
 ## Requirements

@@ -139,37 +139,32 @@ setup_home_manager() {
 
     cd "$HOME/HyprForge"
 
-    # Try to run home-manager switch
+    # Use the simple username target (preferred). Fall back to nix-shell only.
     local username=$(whoami)
-    local hostname=$(hostname)
-    local flake_target="${username}@${hostname}"
 
-    print_info "Running: home-manager switch --flake ~/HyprForge#${flake_target}"
+    print_info "Running: home-manager switch --flake $HOME/HyprForge#${username}"
     echo ""
-
-    if home-manager switch --flake "$HOME/HyprForge#${flake_target}"; then
+    if home-manager switch --flake "$HOME/HyprForge#${username}"; then
         print_success "Home Manager setup complete!"
         return 0
-    else
-        # If it failed, try with nix-shell
-        print_warning "Direct home-manager command failed, trying with nix-shell..."
-        echo ""
-
-        if nix-shell -p home-manager --run "home-manager switch --flake $HOME/HyprForge#${flake_target}"; then
-            print_success "Home Manager setup complete!"
-            return 0
-        else
-            print_error "Home Manager setup failed"
-            echo ""
-            print_info "You can try manually with:"
-            echo -e "  ${BOLD}cd ~/HyprForge${NC}"
-            echo -e "  ${BOLD}home-manager switch --flake .#${flake_target}${NC}"
-            echo ""
-            print_info "Or:"
-            echo -e "  ${BOLD}nix-shell -p home-manager --run 'home-manager switch --flake ~/HyprForge#${flake_target}'${NC}"
-            exit 1
-        fi
     fi
+
+    print_warning "Direct home-manager command failed, trying with nix-shell..."
+    echo ""
+    if nix-shell -p home-manager --run "home-manager switch --flake $HOME/HyprForge#${username} -b old"; then
+        print_success "Home Manager setup complete!"
+        return 0
+    fi
+
+    print_error "Home Manager setup failed"
+    echo ""
+    print_info "You can try manually with:"
+    echo -e "  ${BOLD}cd ~/HyprForge${NC}"
+    echo -e "  ${BOLD}home-manager switch --flake .#$(whoami) -b old${NC}"
+    echo ""
+    print_info "Or via nix-shell:"
+    echo -e "  ${BOLD}nix-shell -p home-manager --run 'home-manager switch --flake ~/HyprForge#$(whoami) -b old'${NC}"
+    exit 1
 }
 
 # Print completion message

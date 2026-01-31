@@ -31,7 +31,7 @@ in
     # Add your aliases here
     shellAliases = {
       rebuild = "sudo nixos-rebuild switch --flake ~/HyprForge#${user.hostname}";
-      homeswitch = "home-manager switch --flake ~/HyprForge#${user.hostname}";
+      homeswitch = "home-manager switch --flake ~/nix-config#${user.username}";
     };
 
     # Oh My Zsh provides themes and plugins for zsh

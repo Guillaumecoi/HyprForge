@@ -38,20 +38,27 @@ This is required for Nix flakes to see them (they won't be committed due to .git
 
 - **home-config.nix** - Personal user settings (gitignored)
 - **packages.nix** - User packages by category (gitignored)
-- \*_environment/_ - Environment variables, XDG directories
-- **scripts.nix** - Auto-wraps scripts from `scripts/`
+- **environment/** - Environment variables, XDG directories, default apps
+- **scripts/** - Custom utility scripts
 - **keybindings/** - Central keybinding system
+  - `default.nix` - Main entry point
+  - `converters.nix` - Format converters for different apps
+  - `global.nix` - Window manager keybindings (SUPER key)
+  - `local.nix` - Application keybindings (CTRL/ALT)
 - **programs/** - Per-app configs (auto-imported)
+- **theme/** - Catppuccin theme configuration
+- **package-manager/** - Package management tooling
 
 ## Keybindings
 
 Central system in `keybindings/`:
 
 - **default.nix** - Main entry, exports converters and keybindings
-- **local.nix** - App keybindings (CTRL, ALT)
-- **global.nix** - WM keybindings (SUPER)
-- **apps.nix** - Default applications
 - **converters.nix** - Format converters (Kitty, Yazi, Neovim, VSCode, etc.)
+- **global.nix** - WM keybindings (SUPER)
+- **local.nix** - App keybindings (CTRL, ALT)
+
+Default applications are defined in `environment/apps.nix`.
 
 **Usage in programs:**
 
