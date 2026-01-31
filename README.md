@@ -226,8 +226,10 @@ Real-time weather display with forecast, right in Waybar.
 
 Curated list of 160+ popular applications across all categories. **Just uncomment what you want in `home/packages.nix`** - no hunting for package names:
 
+You can choose how each app is delivered: install native Nix packages for better performance and tighter system integration, or use Flatpaks for stronger sandboxing and isolation (better security and reproducibility). Both options are configured in `home/packages.nix`: native packages are collected in the `nixPackages` list, and Flatpaks are listed in the `flatpakPackages` list (Flatpaks are installed via Flatpak when `home-manager` activates).
+
 ```nix
-home.packages = with pkgs; [
+nixPackages = [
   # Browsers
   firefox          # Pre-configured with extensions
   # brave          # Uncomment to install
@@ -237,6 +239,12 @@ home.packages = with pkgs; [
   discord
   # slack          # Comment out to remove
   # zoom           # One line = one app
+];
+
+flatpakPackages = [
+  "com.usebottles.bottles"
+  "com.github.tchx84.Flatseal"
+  # "com.spotify.Client"              # Comment out to add spotify
 ];
 ```
 

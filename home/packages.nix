@@ -7,6 +7,7 @@
 
 let
   # search for nixpkgs packages with `nix search nixpkgs <name>` or browse https://search.nixos.org/packages
+  # Nix packages are native apps running directly on your system (better performance but not sandboxed)
   nixPackages = [
   # ===== DEVELOPMENT ===== #
 
@@ -63,11 +64,11 @@ let
   "rofi" # Application launcher
   "bibata-cursors" # Cursor theme
   "dunst" # Notification daemon
-  "nwg-displays" # Display configuration GUI
   "gtk" # GTK runtime (for GTK apps)
   "wlogout" # Logout/suspend/shutdown menu
   "hyprlock" # Screen locker for Hyprland
   "hypridle" # Idle management for Wayland
+  # "nwg-displays" # Display configuration GUI (needs configuration to work correctly with Hyprland)
 
   # Utilities
   "hyprpicker" # Color picker
@@ -186,6 +187,8 @@ let
   # These are installed via Flatpak (not Nix packages)
   # Installation handled automatically by home.nix activation
   # search for flatpaks with `flatpak search <name>` or browse https://flathub.org/apps/
+  # flatpak packages are sandboxed applications (better isolation and security but slightly worse performance)
+  # Tip: use Flatseal to manage Flatpak permissions
   flatpakPackages = [
     "com.usebottles.bottles"         # Wine GUI for Windows apps
     "com.github.tchx84.Flatseal"    # Flatpak permissions manager
