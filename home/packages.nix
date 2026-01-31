@@ -112,7 +112,6 @@ let
   # Screenshots & Screen Capture
   "grim" # Screenshots
   "slurp" # Screen region selector
-  "wayfreeze" # Freeze screen for screenshots
   "satty" # Screenshot annotation
   # "wf-recorder" # Screen recording
   # "obs-studio" # Advanced screen recording/streaming

@@ -14,9 +14,17 @@ TMPFILE="$TMP_DIR/$(date +'%Y-%m-%d_%H-%M-%S').png"
 
 case "${1:-select}" in
   select)
-    # Use wayfreeze to freeze screen if available
-    if command -v wayfreeze >/dev/null 2>&1; then
-      grim -g "$(wayfreeze --hide-cursor --after-freeze-cmd slurp)" -t png - > "$TMPFILE"
+    # Use hyprpicker for screen freeze if available
+    if command -v hyprpicker >/dev/null 2>&1; then
+      hyprpicker -r -z &
+      sleep 0.2
+      GEOM=$(slurp)
+      pkill hyprpicker
+      if [ -n "$GEOM" ]; then
+        grim -g "$GEOM" -t png - > "$TMPFILE"
+      else
+        exit 1
+      fi
     else
       grim -g "$(slurp)" -t png - > "$TMPFILE"
     fi
