@@ -12,7 +12,7 @@
     explorer = "kitty -e yazi";
     explorerAlt = "thunar";
     notes = "obsidian";
-    aiCli = "copilot";
+    aiCli = "kitty -e copilot";
   };
 
   # XDG MIME type associations - sets default applications for file types and protocols
@@ -34,11 +34,11 @@
       "application/x-shellscript" = "code.desktop";
 
       # Image viewer
-      "image/jpeg" = "org.gnome.eog.desktop";
-      "image/png" = "org.gnome.eog.desktop";
-      "image/gif" = "org.gnome.eog.desktop";
-      "image/webp" = "org.gnome.eog.desktop";
-      "image/svg+xml" = "org.gnome.eog.desktop";
+      "image/jpeg" = "imv.desktop";
+      "image/png" = "imv.desktop";
+      "image/gif" = "imv.desktop";
+      "image/webp" = "imv.desktop";
+      "image/svg+xml" = "imv.desktop";
 
       # PDF viewer
       "application/pdf" = "org.pwmt.zathura.desktop";

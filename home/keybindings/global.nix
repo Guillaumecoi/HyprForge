@@ -25,6 +25,7 @@ in
   "$BROWSER" = apps.browser;
   "$BROWSER_ALT" = apps.browserAlt;
   "$NOTES" = apps.notes;
+  "$AI" = apps.aiCli;
 
   # Other variables
   "$KBD_BACKLIGHT" = "asus::kbd_backlight"; # Find your keyboard backlight device with `brightnessctl -l`
@@ -63,6 +64,7 @@ in
     "$mainMod, B, [Launcher|Apps] web browser, exec, $BROWSER"
     "$mainMod ALT, B, [Launcher|Apps] web browser alt, exec, $BROWSER_ALT"
     "$mainMod, N, [Launcher|Apps] notes, exec, $NOTES"
+    "$mainMod CTRL, I, [Launcher|AI] open default AI CLI, exec, $AI"
 
     "$mainMod, A, [Launcher|Rofi menus] application finder, exec, pkill -x rofi || rofi -show drun"
     "$mainMod, TAB, [Launcher|Rofi menus] window switcher, exec, pkill -x rofi || rofi -show window"
@@ -78,8 +80,8 @@ in
     "$mainMod SHIFT, W, [Action|Scripting] change wallpaper, exec, wallpaper-rotate"
 
     # Session actions
-    "CTRL ALT, Delete, [Action|Session] logout menu, exec, wlogout"
-    "CTRL ALT, L, [Action|Session] lock screen, exec, hyprlock"
+    "$mainMod, ESCAPE, [Action|Session] power/shutdown/reboot/logout menu, exec, pkill -x wlogout || wlogout"
+    "$mainMod ALT, ESCAPE, [Action|Session] lock screen, exec, hyprlock"
 
     "$mainMod, 1, [Workspaces|Navigation] navigate to workspace 1, workspace, 1"
     "$mainMod, 2, [Workspaces|Navigation] navigate to workspace 2, workspace, 2"
