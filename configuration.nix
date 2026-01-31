@@ -125,24 +125,6 @@ in
     powerManagement.finegrained = false;
   };
 
-  # Conditional swap configuration: handle partitions vs swap files
-  # If swapDevice is null, hardware-configuration.nix handles swap
-  # Otherwise, we can configure it here
-  swapDevices = lib.mkIf (user.swapDevice != null)
-    (
-      let
-        isPartition = builtins.substring 0 5 user.swapDevice == "/dev/";
-      in
-      [
-        (if isPartition then {
-          device = user.swapDevice;
-        } else {
-          device = user.swapDevice;
-          size = user.swapSizeGB * 1024; # Convert GB to MB (only for swap files)
-        })
-      ]
-    );
-
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"

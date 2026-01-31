@@ -415,12 +415,10 @@ Edit [user.nix](../user.nix):
 
   # Printer drivers (empty list = no printing)
   printerDrivers = [ "epson-escpr2" ];
-
-  # Swap configuration
-  swapDevice = "/dev/disk/by-uuid/your-uuid";
-  swapSizeGB = 8;
 }
 ```
+
+**Note:** Swap is automatically detected and configured in `hardware-configuration.nix` by the installer.
 
 ### Custom Scripts
 

@@ -543,10 +543,6 @@ EOF
   # System-specific hardware configuration
   hasNvidiaGpu = ${HAS_NVIDIA};
 
-  # Swap configuration
-  swapDevice = $(if [[ -n "${swap_uuid}" ]]; then echo "\"/dev/disk/by-uuid/${swap_uuid}\""; else echo "null"; fi);
-  swapSizeMB = ${SWAP_SIZE_MB};
-
   # Printer configuration (empty list = no printing)
   printerDrivers = [];
 }
