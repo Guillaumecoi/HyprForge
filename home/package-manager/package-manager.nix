@@ -87,7 +87,7 @@ in
   );
 
   # Flatpak installation and cleanup from flatpakList
-  home.activation.installFlatpaks = lib.hm.dag.entryAfter ["writeBoundary"] ''
+  home.activation.installFlatpaks = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     # Use full path to flatpak from Nix store
     FLATPAK="${pkgs.flatpak}/bin/flatpak"
 

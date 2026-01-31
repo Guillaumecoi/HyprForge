@@ -51,7 +51,7 @@ in
   };
 
   # Ensure zsh config directory exists
-  home.activation.createZshDir = lib.hm.dag.entryBefore ["writeBoundary"] ''
+  home.activation.createZshDir = lib.hm.dag.entryBefore [ "writeBoundary" ] ''
     mkdir -p "$HOME/.config/zsh"
     mkdir -p "$HOME/.local/share/zsh"
   '';

@@ -116,7 +116,7 @@ in
   ];
 
   # Create a basic Hyprland config for SDDM
-      environment.etc."sddm/hyprland.conf" = {
+  environment.etc."sddm/hyprland.conf" = {
     text = ''
       # Basic Hyprland configuration for SDDM
       monitor=,preferred,auto,1
@@ -163,15 +163,15 @@ in
 
   # Link the config to SDDM's home directory and set up cursor theme
   system.activationScripts.sddmConfig = ''
-    if [ ! -f /var/lib/sddm/.config/hypr/hyprland.conf ]; then
-      ln -sf /etc/sddm/hyprland.conf /var/lib/sddm/.config/hypr/hyprland.conf 2>/dev/null || true
-    fi
+        if [ ! -f /var/lib/sddm/.config/hypr/hyprland.conf ]; then
+          ln -sf /etc/sddm/hyprland.conf /var/lib/sddm/.config/hypr/hyprland.conf 2>/dev/null || true
+        fi
 
-    # Set up cursor theme for SDDM
-    cat > /var/lib/sddm/.icons/default/index.theme << EOF
-[Icon Theme]
-Inherits=Bibata-Modern-Classic
-EOF
-    chown -R sddm:sddm /var/lib/sddm/.icons
+        # Set up cursor theme for SDDM
+        cat > /var/lib/sddm/.icons/default/index.theme << EOF
+    [Icon Theme]
+    Inherits=Bibata-Modern-Classic
+    EOF
+        chown -R sddm:sddm /var/lib/sddm/.icons
   '';
 }
