@@ -26,10 +26,9 @@ in
 
 {
   imports = [
-    ./home/scripts.nix
-    ./home/environment.nix
-    ./home/theme.nix
-    ./theme/xdg.nix
+    ./home/scripts/scripts.nix
+    ./home/environment
+    ./home/theme
     ./home/package-manager/package-manager.nix
   ]
   ++ programImports;

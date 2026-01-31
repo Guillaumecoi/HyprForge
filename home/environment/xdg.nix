@@ -1,6 +1,5 @@
-# Central environment configuration
-# This file manages XDG directories and imports environment modules.
-# Environment variables and app defaults are defined in ./environment/
+# XDG directories and shell configuration
+# Manages XDG base directories, extra project folders, and zsh XDG-compliant paths
 
 { config
 , pkgs
@@ -9,9 +8,6 @@
 }:
 
 let
-  # Import environment configuration
-  envConfig = import ./environment { inherit config pkgs lib; };
-
   # Additional non-standard XDG directories to create
   extraXdgDirs = [
     "$HOME/Projects"
@@ -20,8 +16,6 @@ let
 
 in
 {
-  # Import environment configuration (apps, core env vars, waybar/weather)
-  imports = [ ./environment ];
   # XDG base directories (managed by home-manager)
   xdg = {
     enable = true;

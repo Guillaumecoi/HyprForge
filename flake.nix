@@ -1,5 +1,5 @@
 {
-  description = "Hyprland on Nixos";
+  description = "HyprForge - A NixOS configuration for Hyprland users";
 
   inputs = {
     # Pin to specific commit for reproducibility
@@ -33,7 +33,6 @@
     let
       # Import user.nix - must be tracked in git for flakes to work
       user = import ./user.nix;
-      theme = import ./theme/theme.nix;
       system = "x86_64-linux";
 
       # Import unstable packages with unfree software enabled and NUR overlay
@@ -52,7 +51,6 @@
           inherit
             inputs
             pkgs-unstable
-            theme
             catppuccin
             ;
         };
@@ -61,13 +59,12 @@
           # Forward unstable pkgs and theme to Home Manager via a small module
           (
             { pkgs-unstable
-            , theme
             , catppuccin
             , ...
             }:
             {
               home-manager.extraSpecialArgs = {
-                inherit pkgs-unstable theme catppuccin;
+                inherit pkgs-unstable catppuccin;
               };
             }
           )
@@ -86,7 +83,6 @@
           inherit
             inputs
             pkgs-unstable
-            theme
             catppuccin
             ;
         };

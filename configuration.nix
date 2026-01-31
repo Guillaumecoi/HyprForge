@@ -2,7 +2,6 @@
 , lib
 , pkgs
 , pkgs-unstable
-, theme
 , catppuccin
 , ...
 }:
