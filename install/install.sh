@@ -20,7 +20,7 @@ BOLD='\033[1m'
 
 # Configuration variables (populated by prompts)
 TARGET_DISK=""
-SWAP_SIZE_GB=""
+SWAP_SIZE_MB=""
 ENCRYPT_OS="false"
 USERNAME=""
 HOSTNAME=""
@@ -132,15 +132,15 @@ select_swap() {
     print_step "2/7" "Swap Configuration"
 
     # Get RAM size for recommendation
-    local ram_gb
-    ram_gb=$(free -g | awk '/^Mem:/{print $2}')
+    local ram_mb
+    ram_mb=$(free -m | awk '/^Mem:/{print $2}')
 
-    print_info "Your system has ${ram_gb}GB RAM"
-    print_info "Recommended swap: ${ram_gb}GB (for hibernation) or $((ram_gb / 2))GB (general use)"
+    print_info "Your system has ${ram_mb}MB RAM"
+    print_info "Recommended swap: ${ram_mb}MB (for hibernation) or $((ram_mb / 2))MB (general use)"
     echo ""
 
     while true; do
-        echo -e "${CYAN}Enter swap size in GB (0 for no swap): ${NC}"
+        echo -e "${CYAN}Enter swap size in MB (0 for no swap): ${NC}"
         read -r swap_input
 
         if [[ ! "$swap_input" =~ ^[0-9]+$ ]]; then
@@ -148,14 +148,14 @@ select_swap() {
             continue
         fi
 
-        SWAP_SIZE_GB=$swap_input
+        SWAP_SIZE_MB=$swap_input
         break
     done
 
-    if [[ $SWAP_SIZE_GB -eq 0 ]]; then
+    if [[ $SWAP_SIZE_MB -eq 0 ]]; then
         print_info "No swap partition will be created"
     else
-        print_info "Swap size: ${SWAP_SIZE_GB}GB"
+        print_info "Swap size: ${SWAP_SIZE_MB}MB"
     fi
 }
 
@@ -234,8 +234,8 @@ show_summary() {
     echo "  Encryption: ${ENCRYPT_OS}"
     echo "  Layout:"
     echo "    - EFI:  512MB (FAT32)"
-    if [[ $SWAP_SIZE_GB -gt 0 ]]; then
-        echo "    - Swap: ${SWAP_SIZE_GB}GB $(if [[ "${ENCRYPT_OS}" == "true" ]]; then echo "(encrypted)"; fi)"
+    if [[ $SWAP_SIZE_MB -gt 0 ]]; then
+        echo "    - Swap: ${SWAP_SIZE_MB}MB $(if [[ "${ENCRYPT_OS}" == "true" ]]; then echo "(encrypted)"; fi)"
     fi
     echo "    - Root: Remaining space (ext4 $(if [[ "${ENCRYPT_OS}" == "true" ]]; then echo "encrypted"; fi))"
     echo ""
@@ -338,8 +338,8 @@ partition_disk() {
     local swap_end=""
     local root_start=""
 
-    if [[ $SWAP_SIZE_GB -gt 0 ]]; then
-        swap_end="$((512 + SWAP_SIZE_GB * 1024))MB"
+    if [[ $SWAP_SIZE_MB -gt 0 ]]; then
+        swap_end="$((512 + SWAP_SIZE_MB))MB"
         root_start="${swap_end}"
     else
         root_start="${efi_end}"
@@ -350,13 +350,13 @@ partition_disk() {
     parted -s "${TARGET_DISK}" mkpart ESP fat32 1MB "${efi_end}"
     parted -s "${TARGET_DISK}" set 1 esp on
 
-    if [[ $SWAP_SIZE_GB -gt 0 ]]; then
-        print_info "Creating swap partition (${SWAP_SIZE_GB}GB)..."
+    if [[ $SWAP_SIZE_MB -gt 0 ]]; then
+        print_info "Creating swap partition (${SWAP_SIZE_MB}MB)..."
         parted -s "${TARGET_DISK}" mkpart swap linux-swap "${swap_start}" "${swap_end}"
     fi
 
     print_info "Creating root partition (remaining space)..."
-    if [[ $SWAP_SIZE_GB -gt 0 ]]; then
+    if [[ $SWAP_SIZE_MB -gt 0 ]]; then
         parted -s "${TARGET_DISK}" mkpart root ext4 "${root_start}" 100%
     else
         parted -s "${TARGET_DISK}" mkpart root ext4 "${root_start}" 100%
@@ -380,7 +380,7 @@ partition_disk() {
         echo ""
 
         # Encrypt root partition (this will ask for passphrase once)
-        if [[ $SWAP_SIZE_GB -gt 0 ]]; then
+        if [[ $SWAP_SIZE_MB -gt 0 ]]; then
             print_info "Encrypting root partition..."
             cryptsetup luksFormat --type luks2 "${part_prefix}3"
             print_info "Opening encrypted root..."
@@ -409,7 +409,7 @@ partition_disk() {
         print_success "Encryption setup complete"
     else
         # No encryption - standard formatting
-        if [[ $SWAP_SIZE_GB -gt 0 ]]; then
+        if [[ $SWAP_SIZE_MB -gt 0 ]]; then
             print_info "Formatting swap partition..."
             mkswap "${part_prefix}2"
             print_info "Enabling swap..."
@@ -430,7 +430,7 @@ partition_disk() {
     if [[ "${ENCRYPT_OS}" == "true" ]]; then
         # Use encrypted mapper device for root
         ROOT_PART="/dev/mapper/cryptroot"
-        if [[ $SWAP_SIZE_GB -gt 0 ]]; then
+        if [[ $SWAP_SIZE_MB -gt 0 ]]; then
             SWAP_PART="${part_prefix}2"
             CRYPT_ROOT_DEVICE="${part_prefix}3"
         else
@@ -439,7 +439,7 @@ partition_disk() {
         fi
     else
         # Use regular partitions
-        if [[ $SWAP_SIZE_GB -gt 0 ]]; then
+        if [[ $SWAP_SIZE_MB -gt 0 ]]; then
             SWAP_PART="${part_prefix}2"
             ROOT_PART="${part_prefix}3"
         else
@@ -513,7 +513,7 @@ EOF
         fi
 
         # If swap exists, copy the swap encryption script for later use
-        if [[ $SWAP_SIZE_GB -gt 0 ]]; then
+        if [[ $SWAP_SIZE_MB -gt 0 ]]; then
             print_info "Installing swap encryption script..."
 
             # Create /root directory if it doesn't exist
@@ -545,7 +545,7 @@ EOF
 
   # Swap configuration
   swapDevice = $(if [[ -n "${swap_uuid}" ]]; then echo "\"/dev/disk/by-uuid/${swap_uuid}\""; else echo "null"; fi);
-  swapSizeGB = ${SWAP_SIZE_GB};
+  swapSizeMB = ${SWAP_SIZE_MB};
 
   # Printer configuration (empty list = no printing)
   printerDrivers = [];
@@ -749,7 +749,7 @@ print_complete() {
     echo -e "  5. After setup completes, logout and login again"
     echo -e "  6. Now select 'Hyprland' (full version) at SDDM"
 
-    if [[ "${ENCRYPT_OS}" == "true" ]] && [[ $SWAP_SIZE_GB -gt 0 ]]; then
+    if [[ "${ENCRYPT_OS}" == "true" ]] && [[ $SWAP_SIZE_MB -gt 0 ]]; then
         echo ""
         print_warning "Encrypted System: You will need to enter your LUKS passphrase at boot"
         echo -e "  5. (Optional) Encrypt swap: ${BOLD}sudo /root/setup-encrypted-swap.sh${NC}"
@@ -762,7 +762,7 @@ print_complete() {
     print_info "Useful Hyprland keybindings (after setup):"
     echo -e "  • ${BOLD}SUPER + T${NC}     → Terminal"
     echo -e "  • ${BOLD}SUPER + A${NC}     → App launcher"
-    echo -e "  • ${BOLD}SUPER + SLASH${NC} → Show all keybindings"
+    echo -e "  • ${BOLD}SUPER + F1${NC} → Show all keybindings"
     echo ""
     print_info "Configuration locations:"
     echo "  • System config: /etc/nixos"
