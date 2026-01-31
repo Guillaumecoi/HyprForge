@@ -36,7 +36,6 @@ All 160+ packages available in HyprForge, organized by category. This list shows
 ### Development Tools
 
 - **direnv** - Automatic environment switcher
-- **nixfmt-rfc-style** - Nix code formatter
 - **nixpkgs-fmt** - Alternative Nix formatter
 - **nixd** - Nix language server for IDEs
 - **taplo** - TOML formatter

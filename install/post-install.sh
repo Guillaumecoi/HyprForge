@@ -142,9 +142,9 @@ setup_home_manager() {
     # Use the simple username target (preferred). Fall back to nix-shell only.
     local username=$(whoami)
 
-    print_info "Running: home-manager switch --flake $HOME/HyprForge#${username}"
+    print_info "Running: home-manager switch --flake $HOME/HyprForge#${username} -b old"
     echo ""
-    if home-manager switch --flake "$HOME/HyprForge#${username}"; then
+    if home-manager switch --flake "$HOME/HyprForge#${username} -b old"; then
         print_success "Home Manager setup complete!"
         return 0
     fi
