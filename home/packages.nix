@@ -29,7 +29,7 @@ let
 
     # Development
     "direnv" # Environment switcher
-    "nixfmt-rfc-style" # Nix code formatter
+    "nixfmt" # Nix code formatter
     "nixpkgs-fmt" # Nixpkgs formatter
     "nixd" # Nix language server backend
     "taplo" # TOML formatter
@@ -85,7 +85,7 @@ let
 
     # Disk & Storage
     "yazi" # Terminal file explorer
-    "xfce.thunar" # Xfce file manager
+    "thunar" # Xfce file manager
     "ncdu" # Disk usage analyzer
     "gnome-disk-utility" # Disk manager
     "kdePackages.ark" # Archive manager
