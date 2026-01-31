@@ -1,5 +1,9 @@
 { pkgs, config, lib, ... }:
 
+let
+  homeConfig = import ../../home-config.nix;
+  timeouts = homeConfig.timeouts;
+in
 {
   services.hypridle = {
 
@@ -13,33 +17,29 @@
       listener = [
         {
           # Save current brightness, dim and warn that the screen will be locked in 1 minute
-          timeout = 240;
+          timeout = timeouts.dim;
           on-timeout = "hypridle-save-and-dim";
           on-resume = "hypridle-restore-brightness";
         }
         {
-          # Lock the screen after 5 minutes of inactivity
-          timeout = 300;
+          # Lock the screen after configured timeout
+          timeout = timeouts.lock;
           on-timeout = "hyprlock";
           on-resume = "hypridle-restore-brightness";
         }
         {
-          # turn off the screen after 7 minutes of inactivity
-          timeout = 420;
+          # Turn off the screen after configured timeout
+          timeout = timeouts.screenOff;
           on-timeout = "hyprctl dispatch dpms off";
           on-resume = "hyprctl dispatch dpms on && hypridle-restore-brightness";
         }
         {
-          # suspend the system after 1 hour of inactivity
-          timeout = 3600;
+          # Suspend the system after configured timeout
+          timeout = timeouts.suspend;
           on-timeout = "systemctl suspend";
           on-resume = "hypridle-restore-brightness";
         }
       ];
     };
-
-
-
-
   };
 }
