@@ -131,9 +131,10 @@ select_disk() {
 select_swap() {
     print_step "2/7" "Swap Configuration"
 
-    # Get RAM size for recommendation
-    local ram_mb
-    ram_mb=$(free -m | awk '/^Mem:/{print $2}')
+    # Get actual total RAM from /proc/meminfo (more accurate than 'free')
+    local ram_kb
+    ram_kb=$(grep MemTotal /proc/meminfo | awk '{print $2}')
+    local ram_mb=$((ram_kb / 1024))
 
     print_info "Your system has ${ram_mb}MB RAM"
     print_info "Recommended swap: ${ram_mb}MB (for hibernation) or $((ram_mb / 2))MB (general use)"
