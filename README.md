@@ -10,6 +10,35 @@
   <img src="screenshots/desktop.png" alt="Desktop Preview" width="100%"/>
 </p>
 
+## Video Guides
+
+<table>
+<tr>
+<td width="33%" align="center">
+
+### 🎬 Demo & Overview
+
+[![Demo](https://img.youtube.com/vi/7zJoLJHA8NQ/mqdefault.jpg)](https://www.youtube.com/watch?v=7zJoLJHA8NQ)
+
+</td>
+<td width="33%" align="center">
+
+### 🚀 Installation Tutorial
+
+[![Installation](https://img.youtube.com/vi/3kxDVAS6ph4/mqdefault.jpg)](https://www.youtube.com/watch?v=3kxDVAS6ph4)
+
+</td>
+<td width="33%" align="center">
+
+### 💻 Code Implementation
+
+[![Implementation](https://img.youtube.com/vi/dGpUuLbXhUo/mqdefault.jpg)](https://www.youtube.com/watch?v=dGpUuLbXhUo)
+
+
+</td>
+</tr>
+</table>
+
 ## Why This Exists
 
 Hyprland is an incredible tiling window manager, but it lacks essentials like a status bar, application launcher, or notification system. This configuration fills those gaps with a complete, polished desktop environment.

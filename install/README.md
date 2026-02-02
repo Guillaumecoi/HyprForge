@@ -2,6 +2,14 @@
 
 This guide walks you through installing NixOS with this configuration on a new machine.
 
+## Video Tutorial
+
+**Watch the complete installation walkthrough:**
+
+[![HyprForge Installation Tutorial](https://img.youtube.com/vi/3kxDVAS6ph4/mqdefault.jpg)](https://www.youtube.com/watch?v=3kxDVAS6ph4)
+
+*Click to watch: Step-by-step video guide showing the entire installation process from USB creation to first login.*
+
 ## Prerequisites
 
 - A USB drive (4GB+) for the NixOS installer
